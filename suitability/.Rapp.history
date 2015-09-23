@@ -1,0 +1,1815 @@
+summary(noprior)
+names(noprior)
+sd(noprior$residuals)
+iris
+head(iris)
+#' Add rows, setting additional columns to 0#
+#'#
+#' Any columns in data1 but not in data2 will be set to 0 in the#
+#' additional rows from data1.#
+#' Any columns in data2 but not in data1 will be ignored.#
+#'#
+#' @param data1 data frame#
+#' @param data2 dataframe#
+#' @return Augmented data frame#
+#' @examples#
+#' rbind.fill.data.frame(iris, data.frame(Sepal.Width=5))#
+#
+rbind.fill.data.frame <- function(data1, data2) {#
+    for (column in names(data1))#
+        if (!(column %in% names(data2)))#
+            data2[, column] <- 0#
+#
+    rbind(data1, data2[, names(data1)])#
+}
+#' Add additional columns to a dataframe, as zeros#
+#'#
+#' @param data data frame#
+#' @param columns vector of characters#
+#' @return Augmented data frame#
+#' @examples#
+#' cbind.fill.data.frame(iris, c('one', 'two'))#
+#
+cbind.fill.data.frame <- function(data, columns) {#
+    for (column in columns)#
+        data[, column] <- 0#
+#
+    data#
+}
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    for (ii in 1:nrow(priors)) {#
+        result[, priors$coeff[ii]] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+mod <- lm(Sepal.Length ~ Sepal.Width)
+mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)
+summary(mod)
+sde <- sd(mod$residuals)
+sde
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+data.frame(coeff="Sepal.Width", mean=0, serr=.1)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        result[, priors$coeff[ii]] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    for (ii in 1:nrow(priors)) {#
+        result[, priors$coeff[ii]] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+        print(result)#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    for (ii in 1:nrow(priors)) {#
+        result[, priors$coeff[ii]] <- 0#
+        print(result)#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+priors
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        print(priors$coeff[ii])#
+        result[, priors$coeff[ii]] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+priors
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        result[, as.character(priors$coeff[ii])] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        print(as.character(priors$coeff[ii]))#
+        result[, as.character(priors$coeff[ii])] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        result$Sepal.Width <- 0#
+        print(as.character(priors$coeff[ii]))#
+        result[, as.character(priors$coeff[ii])] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        result$Sepal.Width <- 0#
+        print(result)#
+        result[, as.character(priors$coeff[ii])] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        result$Sepal.Width <- 0#
+        print(result[, as.character(priors$coeff[ii])])#
+        result[, as.character(priors$coeff[ii])] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        print(column)#
+        result[, column] <- 0#
+        print('ok')#
+        result[ii, priors$coeff[ii]] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    print(result)#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, column] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, column] <- 1 / scales[ii]#
+    }#
+#
+    result#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, column] <- 1 / scales[ii]#
+    }#
+#
+    rbind.fill.data.frame(data, result)#
+}
+add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+iris2 <- add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)
+summary(lm(Sepal.Length ~ Sepal.Width, data=iris))
+summary(mod)
+summary(lm(Sepal.Length ~ Sepal.Width, data=iris2))
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' -mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' iris2 <- add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#' summary(lm(Sepal.Length ~ Sepal.Width, data=iris2))#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- -priors$mean / scales#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, column] <- 1 / scales[ii]#
+    }#
+#
+    rbind.fill.data.frame(data, result)#
+}
+sde <- sd(noprior$residuals)#
+    priors <- data.frame(coeff=c('gdd1000', 'kdd1000', 'frosts', 'precip', 'precip2'), mean=c(0.152, -2.806, 0.0005, 0.347, 0.366), serr=c(0.050, 0.342, 0.0001, 0.028, 0.036))
+sde
+mydata.db <- add.priors(mydata, priors, 'logyield', sde)
+nrow(mydata.db)
+nrow(mydata)
+tail(mydata.db)
+mydata.db$regionvarietyBrazil.combined[(nrow(mydata)+1):nrow(mydata.db)] <- 1
+tail(mydata.db)
+mydata.db$regionvarietyBrazil.combined
+dbprior <- lm(myformula, mydata.db)
+summary(dbprior)
+dbprior$residuals
+dbprior$residuals[length(dbprior$residuals - 4)]
+dbprior$residuals[length(dbprior$residuals) - 4]
+tail(mydata.db)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' iris2 <- add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#' summary(lm(Sepal.Length ~ Sepal.Width, data=iris2))#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean / scales#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, column] <- 1 / scales[ii]#
+    }#
+#
+    rbind.fill.data.frame(data, result)#
+}
+mydata.db <- add.priors(mydata, priors, 'logyield', sde)#
+    mydata.db$regionvarietyBrazil.combined[(nrow(mydata)+1):nrow(mydata.db)] <- 1#
+#
+    dbprior <- lm(myformula, mydata.db)
+summary(dbprior)
+dbprior$residuals[length(dbprior$residuals) - 4]
+sde
+sde / priors$serr
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' iris2 <- add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#' summary(lm(Sepal.Length ~ Sepal.Width, data=iris2))#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean * scales#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, column] <- scales[ii]#
+    }#
+#
+    rbind.fill.data.frame(data, result)#
+}
+mydata.db <- add.priors(mydata, priors, 'logyield', sde)#
+    mydata.db$regionvarietyBrazil.combined[(nrow(mydata)+1):nrow(mydata.db)] <- 1#
+#
+    dbprior <- lm(myformula, mydata.db)
+summary(dbprior)
+dbprior$residuals[length(dbprior$residuals) - 4]
+sde
+tail(mydata.db)
+calc.fo.weights(myformula, "gdd1000", ratio=1, mydata)
+calc.fo.weights(myformula, "gdd1000", ratio=1/nrow(mydata), mydata)
+calc.fo.weights(myformula, "gdd1000", ratio=nrow(mydata), mydata)
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr, weight#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' iris2 <- add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#' summary(lm(Sepal.Length ~ Sepal.Width, data=iris2))#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean * scales * priors$weight#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, column] <- scales[ii] * priors$weight#
+    }#
+#
+    rbind.fill.data.frame(data, result)#
+}
+priors$weight <- c(calc.fo.weights(myformula, "gdd1000", ratio=nrow(mydata), mydata),#
+                       calc.fo.weights(myformula, "kdd1000", ratio=nrow(mydata), mydata),#
+                       calc.fo.weights(myformula, "frosts", ratio=nrow(mydata), mydata),#
+                       calc.fo.weights(myformula, "precip", ratio=nrow(mydata), mydata),#
+                       calc.fo.weights(myformula, "precip2", ratio=nrow(mydata), mydata))
+mydata.db <- add.priors(mydata, priors, 'logyield', sde)
+priors
+#' Add rows for priors on coefficients#
+#'#
+#' Row values scaled so that errors like sde match the given standard#
+#' error.#
+#' Calculate sde by estimating equation without the priors, and then calling#
+#' sde <- sd(noprior.fit$residuals)#
+#'#
+#' Sets up equations of the form#
+#' mean / scale = beta * 1 / scale + epsilon#
+#'#
+#' @param data data frame#
+#' @param priors data frame of coeff, mean, serr, weight#
+#' @param depvar character, the name of the dependent variable#
+#' @param sde numeric, the sd of residuals without the priors#
+#' @return Augmented data frame#
+#' @examples#
+#' mod <- lm(Sepal.Length ~ Sepal.Width, data=iris)#
+#' sde <- sd(mod$residuals)#
+#' iris2 <- add.priors(iris, data.frame(coeff="Sepal.Width", mean=0, serr=.1), "Sepal.Length", sde)#
+#' summary(lm(Sepal.Length ~ Sepal.Width, data=iris2))#
+#
+add.priors <- function(data, priors, depvar, sde) {#
+    scales <- sde / priors$serr#
+#
+    result <- data.frame(ignore=rep(0, nrow(priors)))#
+    result[, depvar] <- priors$mean * scales * priors$weight#
+    for (ii in 1:nrow(priors)) {#
+        column <- as.character(priors$coeff[ii])#
+        result[, column] <- 0#
+        result[ii, column] <- scales[ii] * priors$weight[ii]#
+    }#
+#
+    rbind.fill.data.frame(data, result)#
+}
+mydata.db <- add.priors(mydata, priors, 'logyield', sde)
+mydata.db$regionvarietyBrazil.combined[(nrow(mydata)+1):nrow(mydata.db)] <- 1#
+#
+    dbprior <- lm(myformula, mydata.db)
+summary(dbprior)
+priors$weight <- rep(10, 5)#
+#
+    mydata.db <- add.priors(mydata, priors, 'logyield', sde)#
+    mydata.db$regionvarietyBrazil.combined[(nrow(mydata)+1):nrow(mydata.db)] <- 1#
+#
+    dbprior <- lm(myformula, mydata.db)
+summary(dbprior)
+priors$weight <- rep(1, 5)#
+#
+    mydata.db <- add.priors(mydata, priors, 'logyield', sde)#
+    mydata.db$regionvarietyBrazil.combined[(nrow(mydata)+1):nrow(mydata.db)] <- 1#
+#
+    dbprior <- lm(myformula, mydata.db)
+summary(dbprior)
+priors$weight <- rep(2, 5)#
+#
+    mydata.db <- add.priors(mydata, priors, 'logyield', sde)#
+    mydata.db$regionvarietyBrazil.combined[(nrow(mydata)+1):nrow(mydata.db)] <- 1#
+#
+    dbprior <- lm(myformula, mydata.db)
+summary(dbprior)
+library(stargazer)#
+stargazer(noprior, dbprior, title="Hierarchical model", align=T, dep.var.labels=c("Countries only", "With Brazil"), no.space=T)
+priors$weight <- rep(1, 5) # Double-weight the prior#
+#
+    mydata.db <- add.priors(mydata, priors, 'logyield', sde)#
+    mydata.db$regionvarietyBrazil.combined[(nrow(mydata)+1):nrow(mydata.db)] <- 1#
+#
+    dbprior <- lm(myformula, mydata.db)
+summary(dbprior)
+.152 - .05*2
+library(stargazer)#
+stargazer(noprior, dbprior, title="Hierarchical model", align=T, dep.var.labels=c("Countries only", "With Brazil"), no.space=T)
+pooled <- lm(logyield ~ 0 + gdd1000 + kdd1000 + frosts + precip + precip2, data=data)
+stargazer(pooled, noprior, dbprior, title="Hierarchical model", align=T, dep.var.labels=c("Pooled", "Countries only", "With Brazil"), no.space=T)
+pooled <- lm(logyield ~ 0 + gdd1000 + kdd1000 + frosts + precip + precip2 + regoinvariety, data=data)
+pooled <- lm(logyield ~ 0 + gdd1000 + kdd1000 + frosts + precip + precip2 + regionvariety, data=data)
+stargazer(pooled, noprior, dbprior, title="Hierarchical model", align=T, dep.var.labels=c("Pooled", "Countries only", "With Brazil"), no.space=T)
+summary(polled)
+summary(pooled)
+pooled <- lm(logyield ~ 0 + gdd1000 + kdd1000 + frosts + precip + precip2 + year + regionvariety, data=data)
+summary(pooled)
+setwd("~/projects/coffee/production")#
+#
+frm <- read.csv("faostat.csv")#
+#
+areas <- subset(frm, Year > 2002 & ElementName == "Area harvested")
+unique(areas$Year)
+areas[1,]
+data <- data.frame(country=c(), area=c())#
+for (country in unique(areas$AreaName))#
+    data <- rbind(data, data.frame(country, area=mean(areas$Value[areas$AreaName == country], na.rm=T)))
+data
+data <- data.frame(country=c(), area=c())#
+for (country in unique(areas$AreaName)) {#
+    if (country == "World")#
+        break # ignore everything after this#
+#
+    data <- rbind(data, data.frame(country, area=mean(areas$Value[areas$AreaName == country], na.rm=T)))#
+}
+data
+include <- !(data$country %in% c("China, mainland", "China, Taiwan Province of"))
+source("tools_map.R")
+map.color(data$country[include], data$area[include])
+map.color(data$country[include], data$area[include], ylim=c(-30, 30))
+map.color(data$country[include], data$area[include])
+source("tools_map.R")
+map.color(data$country[include], data$area[include], start=.15, end=.05)
+source("tools_map.R")
+map.color(data$country[include], data$area[include], start=.15, end=.05)
+map.color(data$country[include], data$area[include], start=.1, end=.2)
+map.color(data$country[include], data$area[include], start=.15, end=.25)
+map.color(data$country[include], data$area[include], start=.15, end=.25, log=T)
+map.color(data$country[include], data$area[include], start=.15, end=.25)
+source("tools_map.R")
+map.color(data$country[include], data$area[include], start=.15, end=.25)
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25)
+source("tools_map.R")
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=0)
+data <- data.frame(country=c(), area=c())#
+for (country in unique(areas$AreaName)) {#
+    if (country == "World")#
+        break # ignore everything after this#
+    if (country == "United States of America")#
+        country <- "Hawaii"#
+#
+    data <- rbind(data, data.frame(country, area=mean(areas$Value[areas$AreaName == country], na.rm=T)))#
+}
+include <- !(data$country %in% c("China, mainland", "China, Taiwan Province of"))
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=0)
+map(region="USA:Hawaii")
+map("world", region="USA:Hawaii")
+map(region="Hawaii")
+source("tools_map.R")
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=0)
+map("Hawaii")
+map(region="Hawaii")
+source("tools_map.R")
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=0)
+dat
+data
+areas[areas$country == "Hawaii"]
+areas[areas$country == "United States of America"]
+areas[areas$country == "United States of America",]
+data <- data.frame(country=c(), area=c())#
+for (country in unique(areas$AreaName)) {#
+    if (country == "World")#
+        break # ignore everything after this#
+#
+    mycountry <- country#
+    if (country == "United States of America")#
+        mycountry <- "Hawaii"#
+#
+    data <- rbind(data, data.frame(country=mycountry, area=mean(areas$Value[areas$AreaName == country], na.rm=T)))#
+}
+include <- !(data$country %in% c("China, mainland", "China, Taiwan Province of"))
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=0)
+round
+?round
+signif(1429, 2)
+round(1429, 2)
+round(1429, -2)
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=-2)
+png("areamap.pdf", width=7, height=4)#
+par(mar=rep(0, 4))#
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=-2)#
+dev.off()
+pdf("areamap.pdf", width=7, height=4)#
+par(mar=rep(0, 4))#
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=-2)#
+dev.off()
+?map
+source("tools_map.R")
+source("tools_map.R")#
+#
+pdf("areamap.pdf", width=7, height=4)#
+par(mar=rep(0, 4))#
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=-2, main="Average coffee harvested area by country")#
+dev.off()
+data
+source("tools_map.R")#
+#
+pdf("areamap.pdf", width=7, height=4)#
+par(mar=rep(0, 4))#
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=-2, main="Average coffee harvested area by country")#
+dev.off()
+source("tools_map.R")#
+#
+pdf("areamap.pdf", width=7, height=4)#
+par(mar=rep(0, 4))#
+map.color(data$country[include], data$area[include] / 100, start=.15, end=.25, digits=-2, main="Average coffee harvested area by country")#
+dev.off()
+setwd("~/projects/coffee/tools/climate")#
+#
+data <- read.csv("colombia.csv")
+data
+dim(data)
+ii = 1
+setwd("~/projects/coffee/tools/climate")#
+#
+library(ggplot2)#
+#
+data <- read.csv("colombia.csv")
+ggplot(data.frame(x=as.numeric(data[ii, 4:12])), aes(x=x)) +#
+        geom_histogram(aes(y=..density..)) +#
+            geom_density(alpha=.2, fill="#FF6666")
+ggplot(data.frame(x=as.numeric(data[ii, 4:12])), aes(x=x)) +#
+        geom_rug()
+data.frame(x=as.numeric(data[ii, 4:12]))
+ggplot(data.frame(x=as.numeric(data[ii, 4:12])), aes(x=x)) +#
+        geom_rug()
+ggplot(data.frame(x=as.numeric(data[ii, 4:12])))#
+        geom_vline(xintercept=x)
+ggplot(data.frame(x=as.numeric(data[ii, 4:12])), aes(xintercept=x))#
+        geom_vline()
+ggplot(data.frame(x=as.numeric(data[ii, 4:12])), aes(xintercept=x)) +#
+        geom_vline()
+ggplot(data.frame(x=as.numeric(data[ii, 4:12]))) +#
+        geom_vline(aes(xintercept=x))
+rug(as.numeric(data[ii, 4:12]))
+rug(as.numeric(data[ii, 4:12]))
+ggplot(data.frame(x=as.numeric(data[ii, 4:12]))) +#
+        geom_density(alpha=.2, fill="#FF6666") +#
+geom_rug()
+ggplot(data.frame(x=as.numeric(data[ii, 4:12])), aes(x=x)) +#
+        geom_density(alpha=.2, fill="#FF6666") +#
+geom_rug()
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+#
+multiplot(p1, p2, p3, p4, p5, p6, p7)
+setwd("~/projects/coffee/tools/climate")#
+#
+library(ggplot2)#
+#
+data <- read.csv("colombia.csv")#
+#
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+#
+library(grid)#
+multiplot(p1, p2, p3, p4, p5, p6, p7, p8, cols=2)
+??multiplot
+setwd("~/projects/coffee/tools/climate")#
+#
+library(ggplot2)#
+#
+# Multiple plot function#
+##
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)#
+# - cols:   Number of columns in layout#
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.#
+##
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),#
+# then plot 1 will go in the upper left, 2 will go in the upper right, and#
+# 3 will go all the way across the bottom.#
+##
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {#
+  require(grid)#
+#
+  # Make a list from the ... arguments and plotlist#
+  plots <- c(list(...), plotlist)#
+#
+  numPlots = length(plots)#
+#
+  # If layout is NULL, then use 'cols' to determine layout#
+  if (is.null(layout)) {#
+    # Make the panel#
+    # ncol: Number of columns of plots#
+    # nrow: Number of rows needed, calculated from # of cols#
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),#
+                    ncol = cols, nrow = ceiling(numPlots/cols))#
+  }#
+#
+ if (numPlots==1) {#
+    print(plots[[1]])#
+#
+  } else {#
+    # Set up the page#
+    grid.newpage()#
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))#
+#
+    # Make each plot, in the correct location#
+    for (i in 1:numPlots) {#
+      # Get the i,j matrix positions of the regions that contain this subplot#
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))#
+#
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,#
+                                      layout.pos.col = matchidx$col))#
+    }#
+  }#
+}#
+#
+data <- read.csv("colombia.csv")#
+#
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug()#
+#
+multiplot(p1, p2, p3, p4, p5, p6, p7, p8, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Annual Mean Temperature") + ylab()#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Mean Diurnal Range") + ylab()#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Temperature Seasonality") + ylab()#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Max Temperature of Warmest Month") + ylab()#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Min Temperature of Coldest Month") + ylab()#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Annual Precipitation") + ylab()#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Precipitation of Wettest Month") + ylab()#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Precipitation of Driest Month") + ylab()#
+#
+multiplot(p1, p2, p3, p4, p5, p6, p7, p8, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position='jitter') +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p2, p3, p4, p5, p6, p7, p8, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position==position_jitter(w=0.01)) +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position==position_jitter(w=0.01)) +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position==position_jitter(w=0.01)) +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position==position_jitter(w=0.01)) +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position==position_jitter(w=0.01)) +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position==position_jitter(w=0.01)) +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position==position_jitter(w=0.01)) +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position==position_jitter(w=0.01)) +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p2, p3, p4, p5, p6, p7, p8, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p2, p3, p4, p5, p6, p7, p8, cols=2)
+p1
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12]), y=0), aes(x=x, y=y)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Annual Mean Temperature") + ylab("")
+p1
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12]), y=factor(0)), aes(x=x, y=y)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug(position=position_jitter(w=0.01)) +#
+xlab("Annual Mean Temperature") + ylab("")
+p1
+ggplot(data.frame(x=as.numeric(data[1, 4:12]), y=0), aes(x=x, y=y)) +#
+    geom_density(alpha=.2, fill="#FF6666")
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Mean Temperature") + ylab("")
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:12])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p2, p3, p4, p5, p6, p7, p8, cols=2)
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+?runif
+dim(data)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20])), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+rnorm(17)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .01 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .01 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) + .01 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .01 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .01 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .01 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .01 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .01 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+data <- read.csv("colombia.csv")
+data
+data <- read.csv("colombia.csv")#
+#
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(xintercept=data$baseline[2]) +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(xintercept=data$baseline[3]) +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(xintercept=data$baseline[4]) +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(xintercept=data$baseline[5]) +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(xintercept=data$baseline[6]) +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(xintercept=data$baseline[7]) +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(xintercept=data$baseline[8]) +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("")#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[2]) +#
+xlab("Mean Diurnal Range") + ylab("")#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[3]) +#
+xlab("Temperature Seasonality") + ylab("")#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[4]) +#
+xlab("Max Temperature of Warmest Month") + ylab("")#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[5]) +#
+xlab("Min Temperature of Coldest Month") + ylab("")#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +#
+xlab("Annual Precipitation") + ylab("")#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[7]) +#
+xlab("Precipitation of Wettest Month") + ylab("")#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[8]) +#
+xlab("Precipitation of Driest Month") + ylab("")#
+#
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(-0.5,1,1,1), "cm"))
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(1,1,1,1), "cm"))
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(0,0,0,0), "cm"))
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(0,.5,.5,.5), "cm"))
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,0,.5), "cm"))
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.5,.5), "cm"))
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[2]) +#
+xlab("Mean Diurnal Range") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[3]) +#
+xlab("Temperature Seasonality") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[4]) +#
+xlab("Max Temperature of Warmest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[5]) +#
+xlab("Min Temperature of Coldest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +#
+xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[7]) +#
+xlab("Precipitation of Wettest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[8]) +#
+xlab("Precipitation of Driest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[2]) +#
+xlab("Mean Diurnal Range") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) / 100 + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[3]) +#
+xlab("Temperature Seasonality") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[4]) +#
+xlab("Max Temperature of Warmest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[5]) +#
+xlab("Min Temperature of Coldest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +#
+xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[7]) +#
+xlab("Precipitation of Wettest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[8]) +#
+xlab("Precipitation of Driest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
+xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[2]) +#
+xlab("Mean Diurnal Range") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+## divide by 100#
+p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) / 100 + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[3] / 100) +#
+xlab("Temperature Seasonality") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[4]) +#
+xlab("Max Temperature of Warmest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[5]) +#
+xlab("Min Temperature of Coldest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +#
+xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[7]) +#
+xlab("Precipitation of Wettest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
+    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[8]) +#
+xlab("Precipitation of Driest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+#
+multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+setwd("~/projects/coffee/tools/suitability")#
+#
+library(ncdf4)#
+library(maps)#
+library(RColorBrewer)#
+library(raster)#
+source("intake/lib.R") # now up in coffee/tools#
+#
+do.rescale <- T #F#
+fileprefix <- "arabica" #"robusta-product"#
+#
+database <- nc_open(paste0("suitability/outputs/", fileprefix, ".nc4"))#
+map <- ncvar_get(database, "suitability")
+if (do.rescale) {#
+    quantile(log(map[map > 0 & map < Inf]) / 50)#
+    map2 <- log(map) / 50#
+    map2[map < .05] <- -Inf # Hide beyond 95% CI#
+    map2[map == Inf] <- max(map2[map2 < Inf]) # Make sure Inf shows up#
+} else {#
+    map2 <- map#
+}
+database <- nc_open("../database/harvestarea.nc4")#
+arabica <- ncvar_get(database, "arabica")#
+#
+longitude <- ncvar_get(database, "lon")#
+latitude <- ncvar_get(database, "lat")#
+#
+mask <- matrix(NA, dim(map2)[1], dim(map2)[2])#
+#
+## Load urban and protected and grey them out#
+urban <- read.csv("data/urban.csv")#
+protected <- read.csv("data/protected.csv")#
+managed <- read.csv("data/managed.csv")#
+mask[(urban$row - 1) * nrow(mask) + urban$col] <- 1 # swap row/col#
+mask[(protected$row - 1) * nrow(mask) + protected$col] <- 2 # swap row/col#
+mask[(managed$row - 1) * nrow(mask) + managed$col] <- 3 # swap row/col#
+#
+## Elevation to grey out oceans#
+elev <- get.elev.map()#
+#
+mask[elev == 0] <- 4#
+mask[is.na(elev)] <- 4#
+#
+none = map2#
+none[none != 0] <- NA#
+none[none == 0] <- 1#
+#
+library(mapdata)
+##pdf("suitability.pdf", width=10, height=3)#
+png(paste0("suitability/outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+map("worldHires", ylim=c(-30, 30), mar=rep(0,4))#
+image(longitude, latitude, map2, col=brewer.pal(11,"RdYlGn"), add=T)#
+image(longitude, latitude, none, col="black", add=T)#
+image(longitude, latitude, mask, col=c("#FF00FF", "#00FFFF", "#FFFFFF80", "#0000FF"), add=T)#
+dev.off()
+do.rescale <- T #F#
+fileprefix <- "robusta" #"robusta-product"#
+#
+database <- nc_open(paste0("suitability/outputs/", fileprefix, ".nc4"))#
+map <- ncvar_get(database, "suitability")#
+if (do.rescale) {#
+    quantile(log(map[map > 0 & map < Inf]) / 50)#
+    map2 <- log(map) / 50#
+    map2[map < .05] <- -Inf # Hide beyond 95% CI#
+    map2[map == Inf] <- max(map2[map2 < Inf]) # Make sure Inf shows up#
+} else {#
+    map2 <- map#
+}#
+#
+database <- nc_open("../database/harvestarea.nc4")#
+arabica <- ncvar_get(database, "arabica")#
+#
+longitude <- ncvar_get(database, "lon")#
+latitude <- ncvar_get(database, "lat")#
+#
+mask <- matrix(NA, dim(map2)[1], dim(map2)[2])#
+#
+## Load urban and protected and grey them out#
+urban <- read.csv("data/urban.csv")#
+protected <- read.csv("data/protected.csv")#
+managed <- read.csv("data/managed.csv")#
+mask[(urban$row - 1) * nrow(mask) + urban$col] <- 1 # swap row/col#
+mask[(protected$row - 1) * nrow(mask) + protected$col] <- 2 # swap row/col#
+mask[(managed$row - 1) * nrow(mask) + managed$col] <- 3 # swap row/col#
+#
+## Elevation to grey out oceans#
+elev <- get.elev.map()#
+#
+mask[elev == 0] <- 4#
+mask[is.na(elev)] <- 4#
+#
+none = map2#
+none[none != 0] <- NA#
+none[none == 0] <- 1#
+#
+library(mapdata)#
+#
+##pdf("suitability.pdf", width=10, height=3)#
+png(paste0("suitability/outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+map("worldHires", ylim=c(-30, 30), mar=rep(0,4))#
+image(longitude, latitude, map2, col=brewer.pal(11,"RdYlGn"), add=T)#
+image(longitude, latitude, none, col="black", add=T)#
+image(longitude, latitude, mask, col=c("#FF00FF", "#00FFFF", "#FFFFFF80", "#0000FF"), add=T)#
+dev.off()
+do.rescale <- T #F#
+fileprefix <- "robusta" #"robusta-product"#
+#
+database <- nc_open(paste0("suitability/outputs/", fileprefix, ".nc4"))#
+map <- ncvar_get(database, "suitability")#
+confs <- ncvar_get(database, "confidence")#
+#
+confs[confs > 1] <- 1 # too high!#
+#
+if (do.rescale) {#
+    quantile(log(map[map > 0 & map < Inf]) / 50)#
+    map2 <- log(map) / 50#
+    map2[map < .05] <- -Inf # Hide beyond 95% CI#
+    map2[map == Inf] <- max(map2[map2 < Inf]) # Make sure Inf shows up#
+} else {#
+    map2 <- map#
+}#
+#
+database <- nc_open("../database/harvestarea.nc4")#
+arabica <- ncvar_get(database, "arabica")#
+#
+longitude <- ncvar_get(database, "lon")#
+latitude <- ncvar_get(database, "lat")#
+#
+mask <- matrix(NA, dim(map2)[1], dim(map2)[2])#
+#
+## Load urban and protected and grey them out#
+urban <- read.csv("data/urban.csv")#
+protected <- read.csv("data/protected.csv")#
+managed <- read.csv("data/managed.csv")#
+mask[(urban$row - 1) * nrow(mask) + urban$col] <- 1 # swap row/col#
+mask[(protected$row - 1) * nrow(mask) + protected$col] <- 2 # swap row/col#
+mask[(managed$row - 1) * nrow(mask) + managed$col] <- 3 # swap row/col#
+#
+## Elevation to grey out oceans#
+elev <- get.elev.map()#
+#
+mask[elev == 0] <- 4#
+mask[is.na(elev)] <- 4#
+#
+none = map2#
+none[none != 0] <- NA#
+none[none == 0] <- 1#
+#
+library(mapdata)#
+#
+##pdf("suitability.pdf", width=10, height=3)#
+png(paste0("suitability/outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+map("worldHires", ylim=c(-30, 30), mar=rep(0,4))#
+image(longitude, latitude, map2, col=brewer.pal(11,"RdYlGn"), add=T)#
+image(longitude, latitude, confs, col=rgb(0, 0, 0, seq(1, 0, by=-.1)), add=T)#
+image(longitude, latitude, none, col="black", add=T)#
+image(longitude, latitude, mask, col=c("#FF00FF", "#00FFFF", "#FFFFFF80", "#0000FF"), add=T)#
+dev.off()
+setwd("~/projects/coffee/tools/suitability")#
+#
+variety <- "arabica"#
+#
+table <- read.csv(paste0("outputs/", variety, "-countries.csv"))#
+table$avgconf[table$avgconf > 100] <- 100#
+table$lossperc[is.na(table$lossperc)] <- NA#
+table$chngperc[table$chngperc > 1000] <- NA#
+table$harvlossperc[is.nan(table$harvlossperc)] <- 0#
+table$harvlossperc[table$lossperc == -100] <- -100#
+#
+## Add in the harvested area#
+table$harvest <- NA#
+#
+faostat <- read.csv("../../database/data/timeseries/fao/faostat.csv")#
+faostat <- subset(faostat, ElementName == "Area harvested")#
+#
+skips <- c("World", "Africa", "Eastern Africa", "Middle Africa", "Western Africa", "Americas", "Northern America", "Central America", "Caribbean", "South America", "Asia", "Eastern Asia", "Southern Asia", "South-Eastern Asia", "Western Asia", "Oceania", "Melanesia", "Polynesia", "Least Developed Countries", "Land Locked Developing Countries", "Small Island Developing States", "Low Income Food Deficit Countries", "Net Food Importing Developing Countries", "Cook Islands", "Saint Vincent and the Grenadines")#
+#
+todo <- unique(faostat$AreaName)#
+#
+unknown <- c()#
+for (country in unique(faostat$AreaName)) {#
+    if (country %in% skips) {#
+        todo <- todo[todo != country]#
+        next#
+    }#
+    print(country)#
+#
+    mycountry <- country#
+    if (mycountry == "Bolivia (Plurinational State of)")#
+        mycountry <- "Bolivia"#
+    if (mycountry == "Côte d'Ivoire")#
+        mycountry <- "C\364te d'Ivoire"#
+    if (mycountry == "Congo")#
+        mycountry <- "Republic of Congo"#
+    if (mycountry == "Cabo Verde")#
+        mycountry <- "Cape Verde"#
+    if (mycountry == "Lao People's Democratic Republic")#
+        mycountry <- "Lao PDR"#
+    if (mycountry == "Sao Tome and Principe")#
+        mycountry <- "S\343o Tom\351 and Principe"#
+    if (mycountry == "China, Taiwan Province of")#
+        mycountry <- "Taiwan"#
+    if (mycountry == "United Republic of Tanzania")#
+        mycountry <- "Tanzania"#
+    if (mycountry == "United States of America")#
+        mycountry <- "United States"#
+    if (mycountry == "Venezuela (Bolivarian Republic of)")#
+        mycountry <- "Venezuela"#
+    if (mycountry == "Viet Nam")#
+        mycountry <- "Vietnam"#
+    if (mycountry == "French Polynesia")#
+        mycountry <- "France"#
+#
+    areas <- subset(faostat, AreaName == country)$Value#
+    area <- areas[length(areas)]#
+    if (mycountry == "France") {#
+        areas <- subset(faostat, AreaName == "Martinique")$Value#
+        area <- area + areas[length(areas)]#
+        todo <- todo[todo != "Martinique"]#
+    }#
+    if (mycountry == "China") {#
+        areas <- subset(faostat, AreaName == "China, mainland")$Value#
+        area <- area + areas[length(areas)]#
+        todo <- todo[todo != "China, mainland"]#
+    }#
+#
+    table$harvest[table$country == mycountry] <- area#
+    if (sum(table$country == mycountry) == 1 || area == 0)#
+        todo <- todo[todo != country]#
+}#
+#
+table <- table[, c("country", "baseline", "increase", "decrease", "avgconf", "lossperc", "chngperc", "harvest", "harvlossperc")]
+table
+table[table$increase == max(table$increase),]
+table[table$decrease == max(table$decrease),]
+table[table$decrease == min(table$decrease),]
+table[table$lossperc == min(table$lossperc),]
+table[!is.na(table$lossperc) & table$lossperc == min(table$lossperc),]
+table[!is.na(table$lossperc) & table$lossperc == min(table$lossperc, na.rm=T),]
+table[!is.na(table$chngperc) & table$chngperc == max(table$chngperc, na.rm=T),]
+table[!is.na(table$harvlossperc) & table$harvlossperc == min(table$harvlossperc, na.rm=T),]
+table$harvlossperc
+quantile(table$harvlossperc)
+sum(table$harvlossperc < -50)
+sum(table$harvlossperc < -100)
+sum(table$harvlossperc <= -100)
+sum(table$harvlossperc <= -50)
