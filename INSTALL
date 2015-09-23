@@ -1,0 +1,10 @@
+Separately installed libraries are required to access NetCDF files in
+python and R.  Typically, you will need to install the NetCDF and HDF5
+system libraries.
+
+Additional python libraries:
+
+* libtiff:
+
+  Install the libtiff system library from http://www.libtiff.org/.
+  Then install the python package: pip install libtiff
