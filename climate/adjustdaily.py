@@ -30,7 +30,7 @@ def get_ncdf_cfsr(nc4path, variable):
 def write_ncdf(nc4path, variable, units, array, lats, lons):
     rootgrp = Dataset(nc4path, 'w', format="NETCDF4")
 
-    day = rootgrp.createDimension('day', array.shape[0])
+    day = rootgrp.createDimension('Time', array.shape[0])
     lat = rootgrp.createDimension('Latitude', array.shape[1])
     lon = rootgrp.createDimension('Longitude', array.shape[2])
 
@@ -39,7 +39,7 @@ def write_ncdf(nc4path, variable, units, array, lats, lons):
     longitudes = rootgrp.createVariable("Longitude","f4",("Longitude",))
     longitudes.units = "degrees East"
 
-    values = rootgrp.createVariable(variable, "f4", ("day", "Latitude", "Longitude"))
+    values = rootgrp.createVariable(variable, "f4", ("Latitude", "Longitude", "Time"))
     values.units = units
 
     latitudes[:] = lats

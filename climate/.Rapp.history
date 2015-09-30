@@ -1,3 +1,154 @@
+y ~ a + b | b ~ c | z ~ c + d
+y ~ A a + B b | B b ~ C c | z ~ c + d
+y ~ a + b | b - c | z ~ c + d
+terms(y ~ a + b | b - c | z ~ c + d)
+as.character(y ~ a + b | b - c | z ~ c + d)
+?grepl
+#' Combine two formulas in hierlm-format#
+#'#
+#' Return the left and right side of a new combined formula.#
+#' Left formula must be a standard formula.  Right formula may take the following forms:#
+#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
+#' a - b : A requirement that two variables be close together (typically one is a factor)#
+#' TODO:#
+#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
+#'#
+#' @param formula1 an lm-style formula#
+#' @param formula2 an additional formula or hierlm term#
+#' @return Augmented formula#
+#' @examples#
+#' combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)#
+#
+combine.formulae <- function(formula1, formula2) {#
+    chunks1 <- as.character(formula1)#
+#
+    if (is.character(formula2))#
+        if (grepl("~", formula2))#
+            formula2 <- as.formula(formula2)#
+#
+    if (is.formula(formula2)) {#
+        chunks2 <- as.character(formula2)#
+        if (chunks2[2] != chunks1[2])#
+            error("Left-hand-side variables do not match.")#
+#
+        terms1 <- get.formula.terms(formula1)#
+        terms2 <- get.formula.terms(formula2)#
+    } else {#
+        terms2 <- strsplit(formula2, "-")[[1]]#
+        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
+#
+        terms1 <- get.formula.terms(formula1)#
+    }#
+#
+    for (term in terms2)#
+        if (!(term %in% terms1))#
+            terms1 <- c(terms1, term)#
+#
+    as.formula(paste(chunks[2], "~", paste(terms1, collapse=" + ")))#
+}
+combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
+?formula
+class(y ~ x)
+#' Combine two formulas in hierlm-format#
+#'#
+#' Return the left and right side of a new combined formula.#
+#' Left formula must be a standard formula.  Right formula may take the following forms:#
+#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
+#' a - b : A requirement that two variables be close together (typically one is a factor)#
+#' TODO:#
+#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
+#'#
+#' @param formula1 an lm-style formula#
+#' @param formula2 an additional formula or hierlm term#
+#' @return Augmented formula#
+#' @examples#
+#' combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)#
+#
+combine.formulae <- function(formula1, formula2) {#
+    chunks1 <- as.character(formula1)#
+#
+    if (is.character(formula2))#
+        if (grepl("~", formula2))#
+            formula2 <- as.formula(formula2)#
+#
+    if (class(formula2) == "formula") {#
+        chunks2 <- as.character(formula2)#
+        if (chunks2[2] != chunks1[2])#
+            error("Left-hand-side variables do not match.")#
+#
+        terms1 <- get.formula.terms(formula1)#
+        terms2 <- get.formula.terms(formula2)#
+    } else {#
+        terms2 <- strsplit(formula2, "-")[[1]]#
+        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
+#
+        terms1 <- get.formula.terms(formula1)#
+    }#
+#
+    for (term in terms2)#
+        if (!(term %in% terms1))#
+            terms1 <- c(terms1, term)#
+#
+    as.formula(paste(chunks[2], "~", paste(terms1, collapse=" + ")))#
+}
+combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
+#' Extract the terms from an lm formula#
+#'#
+#' Return a list of terms in an lm formula, in the order they appear#
+#'#
+#' @param formula lm-style formula#
+#' @return Vector of the terms in the lm formula#
+#' @examples#
+#' get.formula.terms(Sepal.Length ~ Petal.Length + Species + Sepal.Width : Species)#
+#
+get.formula.terms <- function(formula) {#
+    terms <- strsplit(as.character(formula)[3], "\\+")[[1]]#
+    gsub("^\\s+|\\s+$", "", terms)#
+}
+combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
+#' Combine two formulas in hierlm-format#
+#'#
+#' Return the left and right side of a new combined formula.#
+#' Left formula must be a standard formula.  Right formula may take the following forms:#
+#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
+#' a - b : A requirement that two variables be close together (typically one is a factor)#
+#' TODO:#
+#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
+#'#
+#' @param formula1 an lm-style formula#
+#' @param formula2 an additional formula or hierlm term#
+#' @return Augmented formula#
+#' @examples#
+#' combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)#
+#
+combine.formulae <- function(formula1, formula2) {#
+    chunks1 <- as.character(formula1)#
+#
+    if (is.character(formula2))#
+        if (grepl("~", formula2))#
+            formula2 <- as.formula(formula2)#
+#
+    if (class(formula2) == "formula") {#
+        chunks2 <- as.character(formula2)#
+        if (chunks2[2] != chunks1[2])#
+            error("Left-hand-side variables do not match.")#
+#
+        terms1 <- get.formula.terms(formula1)#
+        terms2 <- get.formula.terms(formula2)#
+    } else {#
+        terms2 <- strsplit(formula2, "-")[[1]]#
+        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
+#
+        terms1 <- get.formula.terms(formula1)#
+    }#
+#
+    for (term in terms2)#
+        if (!(term %in% terms1))#
+            terms1 <- c(terms1, term)#
+#
+    as.formula(paste(chunks1[2], "~", paste(terms1, collapse=" + ")))#
+}
+combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
 ?as.formula
 ?env
 terms(y ~ a)
@@ -4013,320 +4164,282 @@ hierlm(Sepal.Length ~ 0 + Petal.Length + Species + Sepal.Width : Species | Sepal
 summary(hierlm(Sepal.Length ~ 0 + Petal.Length + Species + Sepal.Width : Species | Sepal.Width : Species - ., iris, 2))
 100 * exp((2 * 1:50 - 1) / 10) / exp(10)
 2 * 1:50 - 1
-seq(0, 1, length.out = 16)
+setwd("~/projects/coffee/global")#
+#
+source("load-dailies.R")#
+source("~/projects/research-common/R/gdd.R")#
+#
+outfile <- "globalobs-summin.RData" #"globalobs-future-summin.RData"
+gdd.low <- 0#
+gdd.high <- 33#
+#
+get.dailies <- function(variable, variety, PID, date.end) {#
+    year <- as.numeric(format(date.end, "%Y"))#
+    ## Stary by getting previous year#
+    mydata1 <- get.data(variable, variety, year-1, PID)#
+    if (nrow(mydata1) == 0)#
+        return(F)#
+#
+    if (format(date.end, "%m%d") == "0101") {#
+        return(mydata1$averages)#
+    } else {#
+        mydata2 <- get.data(variable, variety, year, PID)#
+        if (nrow(mydata2) == 0)#
+            return(F)#
+#
+        days2 <- as.numeric(date.end - as.Date(paste0(year, "-01-01")))#
+        vals2 <- mydata2$averages[1:days2]#
+        vals1 <- mydata1$averages[days2:365]#
+        return(c(vals1, vals2))#
+    }#
+}#
+#
+## Combine arabica and robusta where I wouldn't have a yield otherwise#
+records$best.areas <- records$planted#
+records$best.areas[is.na(records$best.areas)] <- records$harvested[is.na(records$best.areas)]#
+#
+records$best.yield <- records$yield#
+records$best.yield[is.na(records$best.yield)] <- records$produced[is.na(records$best.yield)] / records$best.areas[is.na(records$best.yield)]#
+#
+for (ii in which(records$variety == "combined" & is.na(records$best.yield) & !is.na(records$best.areas))) {#
+    print(ii / nrow(records))#
+    ## Try to match this up#
+    splitout <- subset(records, date.start == records$date.start[ii] &#
+                           date.end == records$date.end[ii] &#
+                               region == records$region[ii] &#
+                                   variety != "combined")#
+    if (sum(!is.na(splitout$best.yield)) == 0) {#
+        ## We aren't using these for anything else!#
+        records$best.yield[ii] <- sum(splitout$produced) / records$best.areas[ii]#
+    }#
+}#
+#
+data <- data.frame(region=c(), variety=c(), year=c(), produced=c(), yield=c(), PID=c(), frosts=c(), gdds=c(), kdds=c(), summin=c(), precip=c())#
+#
+for (ii in 1:nrow(records)) {#
+    if (is.na(records$best.yield[ii]))#
+        next#
+#
+    region <- as.character(records$region[ii])#
+    variety <- as.character(records$variety[ii])#
+#
+    PID <- get.PID(region)#
+    if (length(PID) == 0) {#
+        print(paste("Cannot find region", region))#
+        next#
+    }#
+#
+    print(c(ii / nrow(records), region, variety))#
+#
+    tmins <- get.dailies("tmin", variety, PID, records$date.end[ii])#
+    if (class(tmins) == "logical")#
+        next#
+    tmaxs <- get.dailies("tmax", variety, PID, records$date.end[ii])#
+    prates <- get.dailies("prate", variety, PID, records$date.end[ii])#
+#
+    ## Count GDDs in previous 12 months#
+    gddkdd <- get.gddkdd(tmins, tmaxs, gdd.low, gdd.high)#
+#
+    ## Also count "frost points": cummulative degrees below 0#
+    frosts <- -sum(tmins[tmins < min(0, gdd.low)])#
+#
+    summin <- sum(tmins)#
+#
+    precip <- sum(prates)#
+#
+    data <- rbind(data, data.frame(region, variety, year=as.numeric(format(records$date.end[ii], "%Y")), produced=records$produced[ii], yield=records$best.yield[ii], PID, frosts, gdds=gddkdd[1], kdds=gddkdd[2], summin, precip))#
+}
+outfile
+save(data, file=outfile)
+## Save in prepared form#
+data2 <- data#
+data2$gdds <- data2$gdds / 1000#
+data2$kdds <- data2$kdds / 1000#
+data2$summin <- data2$summin / 365.25#
+names(data2) <- c("region", "variety", "year", "produced", "yield", "PID", "frosts", "gdd1000", "kdd1000", "avgmin", "precip")#
+#
+write.csv(data2, file="../tools/production/baseline.csv", row.names=F)
+setwd("~/projects/coffee/tools/production")#
+#
+library(maps)#
+source("~/projects/research-common/R/drawmap.R")#
+#
+changes <- read.csv("changes.csv")#
+#
+map("world", ylim=c(-30, 30))#
+draw.map("world", changes$country, changes$change, position="bottomleft", add=T, digits=2)
+setwd("~/projects/coffee/global")
+load("globalobs-future-summin.RData")
+data[1,]
+sum(data$region == "Colombia")
+get.PID
+get.PID("Colombia")
 setwd("~/projects/coffee/tools/climate")#
 #
-library(ggplot2)#
+library(ncdf4)#
+library(maps)#
+library(RColorBrewer)#
 #
-filename <- "tropics-saved.csv" # "colombia.csv"#
+mains <- c("Mean temperature", "Diurnal range", "Maximum temperature", "Minimum temperature", "Annual Precipitation", "Wettest month precipitation", "Driest month precipitation")#
+fileprefixes <- c("bio-1", "bio-2", "bio-5", "bio-6", "bio-12", "bio-13", "bio-14")#
+isprecips <- c(rep(F, 4), rep(T, 3))
+ii = 5
+fileprefix <- fileprefixes[ii]#
+    database <- nc_open(paste0("outputs/", fileprefix, ".nc4"))#
+    map <- ncvar_get(database, "change")#
+    conf <- ncvar_get(database, "confidence")#
 #
-# Multiple plot function#
-##
-# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)#
-# - cols:   Number of columns in layout#
-# - layout: A matrix specifying the layout. If present, 'cols' is ignored.#
-##
-# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),#
-# then plot 1 will go in the upper left, 2 will go in the upper right, and#
-# 3 will go all the way across the bottom.#
-##
-multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {#
-  require(grid)#
+    conf[conf > 1] <- 1#
 #
-  # Make a list from the ... arguments and plotlist#
-  plots <- c(list(...), plotlist)#
+    longitude <- seq(-180 + .5 / 12, 180 - .5 / 12, by=1/12)#
+    latitude <- seq(-30 + .5 / 12, 30 - .5 / 12, by=1/12)#
 #
-  numPlots = length(plots)#
+    library(mapdata)#
 #
-  # If layout is NULL, then use 'cols' to determine layout#
-  if (is.null(layout)) {#
-    # Make the panel#
-    # ncol: Number of columns of plots#
-    # nrow: Number of rows needed, calculated from # of cols#
-    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),#
-                    ncol = cols, nrow = ceiling(numPlots/cols))#
-  }#
+    absmap <- abs(map)#
+    maxmap <- max(absmap[absmap < Inf], na.rm=T)#
 #
- if (numPlots==1) {#
-    print(plots[[1]])#
-#
-  } else {#
-    # Set up the page#
-    grid.newpage()#
-    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))#
-#
-    # Make each plot, in the correct location#
-    for (i in 1:numPlots) {#
-      # Get the i,j matrix positions of the regions that contain this subplot#
-      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))#
-#
-      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,#
-                                      layout.pos.col = matchidx$col))#
+    if (isprecips[ii]) {#
+        maxmap <- .5 * maxmap#
+        colors <- brewer.pal(11,"RdYlBu") #rev(brewer.pal(11,"RdYlBu")), for precip#
+    } else {#
+        colors <- rev(brewer.pal(11,"RdYlBu"))#
     }#
-  }#
-}#
 #
-data <- read.csv(filename)#
+    breaks <- seq(-maxmap, maxmap, length.out=12)
+map("worldHires", ylim=c(-30, 30), mar=rep(0,4))#
+    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)
+map[1,1,]
+map[1,1
+]
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+    map("worldHires", ylim=c(-30, 30), mar=rep(0,4))#
+    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    image(longitude, latitude, is.na(map), col="blue", add=T)#
+    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+dim(map)
+map[1,]
+map[,1]
+dim(is.na(map))
+map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="blue")
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="blue")#
+    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    #image(longitude, latitude, is.na(map), col="blue", add=T)#
+    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    #image(longitude, latitude, is.na(map), col="blue", add=T)#
+    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+ii = 1
+fileprefix <- fileprefixes[ii]#
+    database <- nc_open(paste0("outputs/", fileprefix, ".nc4"))#
+    map <- ncvar_get(database, "change")#
+    conf <- ncvar_get(database, "confidence")#
 #
-p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
-xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
-library(grid)
-setwd("~/projects/coffee/tools/climate")#
+    conf[conf > 1] <- 1#
 #
-library(ggplot2)#
+    longitude <- seq(-180 + .5 / 12, 180 - .5 / 12, by=1/12)#
+    latitude <- seq(-30 + .5 / 12, 30 - .5 / 12, by=1/12)#
 #
-filename <- "tropics-saved.csv" # "colombia.csv"#
+    library(mapdata)#
 #
-# Multiple plot function#
-##
-# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)#
-# - cols:   Number of columns in layout#
-# - layout: A matrix specifying the layout. If present, 'cols' is ignored.#
-##
-# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),#
-# then plot 1 will go in the upper left, 2 will go in the upper right, and#
-# 3 will go all the way across the bottom.#
-##
-multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {#
-  require(grid)#
+    absmap <- abs(map)#
+    maxmap <- max(absmap[absmap < Inf], na.rm=T)#
 #
-  # Make a list from the ... arguments and plotlist#
-  plots <- c(list(...), plotlist)#
-#
-  numPlots = length(plots)#
-#
-  # If layout is NULL, then use 'cols' to determine layout#
-  if (is.null(layout)) {#
-    # Make the panel#
-    # ncol: Number of columns of plots#
-    # nrow: Number of rows needed, calculated from # of cols#
-    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),#
-                    ncol = cols, nrow = ceiling(numPlots/cols))#
-  }#
-#
- if (numPlots==1) {#
-    print(plots[[1]])#
-#
-  } else {#
-    # Set up the page#
-    grid.newpage()#
-    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))#
-#
-    # Make each plot, in the correct location#
-    for (i in 1:numPlots) {#
-      # Get the i,j matrix positions of the regions that contain this subplot#
-      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))#
-#
-      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,#
-                                      layout.pos.col = matchidx$col))#
+    if (isprecips[ii]) {#
+        maxmap <- .5 * maxmap#
+        colors <- brewer.pal(11,"RdYlBu") #rev(brewer.pal(11,"RdYlBu")), for precip#
+    } else {#
+        colors <- rev(brewer.pal(11,"RdYlBu"))#
     }#
-  }#
-}#
 #
-data <- read.csv(filename)#
+    breaks <- seq(-maxmap, maxmap, length.out=12)#
 #
-p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
-xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
-p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +#
-xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
-multiplot(p1, p2, cols=2)
-data
-for (ii in 1:nrow(data))#
-        data[ii, 3:20] <- data[ii, 3:20] + data$baseline[ii]
-data
-p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
-xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+    png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    #image(longitude, latitude, is.na(map), col="blue", add=T)#
+    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+ii = 3
+fileprefix <- fileprefixes[ii]#
+    database <- nc_open(paste0("outputs/", fileprefix, ".nc4"))#
+    map <- ncvar_get(database, "change")#
+    conf <- ncvar_get(database, "confidence")#
 #
-p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +#
-xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+    conf[conf > 1] <- 1#
 #
-multiplot(p1, p2, cols=2)
-p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[2]) +#
-xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+    longitude <- seq(-180 + .5 / 12, 180 - .5 / 12, by=1/12)#
+    latitude <- seq(-30 + .5 / 12, 30 - .5 / 12, by=1/12)#
 #
-multiplot(p1, p2, cols=2)
-data[1, 4:20]
-sort(data[1, 4:20])
-seq(0, 1, length.out=16)
-seq(0, 1, length.out=17)
-seq(0, 1, length.out=17)[c(5, 13)]
-sort(data[1, 4:20])[c(5, 13)]
-data <- read.csv(filename)#
+    library(mapdata)#
 #
-seq(0, 1, length.out=17)[c(5, 13)]#
-sort(data[1, 4:20])[c(5, 13)]
-data
-sort(data[2, 4:20])[c(5, 13)]
-sort(data[2, 4:20])[c(5, 13)] / data$baseline[2]
-data$median[2] / data$baseline[2]
-display <- data.frame(biovar=data$biovar, baseline=data$baseline, median=data$median)#
-display[1, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]
-display[1, c('p25', 'p75')]
-display <- data.frame(biovar=data$biovar, baseline=data$baseline, median=data$median, p25=NA, p75=NA)#
-display[1, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]
-display
-display$median[2] <- data$median[2] / data$baseline[2]#
-display[2, c('p25', 'p75')] <- sort(data[2, 4:20])[c(5, 13)] / data$baseline[2]
-dispaly
-display
-display$median[2] <- 100 * data$median[2] / data$baseline[2]#
-display[2, c('p25', 'p75')] <- 100 * sort(data[2, 4:20])[c(5, 13)] / data$baseline[2]
-display
-library(xtable)
-names(display) <- c("Quantity", "Baseline", "Change", "25 pct.", "75 pct.")
-display
-xtable(display, digits=2)
-xtable(display, digits=1)
-?xtable
-xtable(display, digits=1, display=c(NA, 's', rep('f', 4)))
-print(xtable(display, digits=1), include.rownames=F)
-data <- read.csv(filename)#
+    absmap <- abs(map)#
+    maxmap <- max(absmap[absmap < Inf], na.rm=T)#
 #
-seq(0, 1, length.out=17)[c(5, 13)]#
-display <- data.frame(biovar=data$biovar, baseline=data$baseline, median=data$median, p25=NA, p75=NA)#
-display[1, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[2, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[3, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[4, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[5, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display$median[6] <- 100 * data$median[6] / data$baseline[6]#
-display[6, c('p25', 'p75')] <- 100 * sort(data[6, 4:20])[c(5, 13)] / data$baseline[6]#
-display$median[7] <- 100 * data$median[7] / data$baseline[7]#
-display[7, c('p25', 'p75')] <- 100 * sort(data[7, 4:20])[c(5, 13)] / data$baseline[7]#
-display$median[8] <- 100 * data$median[8] / data$baseline[8]#
-display[8, c('p25', 'p75')] <- 100 * sort(data[8, 4:20])[c(5, 13)] / data$baseline[8]
-filename <- "tropics.csv" # "colombia.csv"
-data <- read.csv(filename)#
+    if (isprecips[ii]) {#
+        maxmap <- .5 * maxmap#
+        colors <- brewer.pal(11,"RdYlBu") #rev(brewer.pal(11,"RdYlBu")), for precip#
+    } else {#
+        colors <- rev(brewer.pal(11,"RdYlBu"))#
+    }#
 #
-seq(0, 1, length.out=17)[c(5, 13)]#
-display <- data.frame(biovar=data$biovar, baseline=data$baseline, median=data$median, p25=NA, p75=NA)#
-display[1, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[2, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[3, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[4, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[5, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display$median[6] <- 100 * data$median[6] / data$baseline[6]#
-display[6, c('p25', 'p75')] <- 100 * sort(data[6, 4:20])[c(5, 13)] / data$baseline[6]#
-display$median[7] <- 100 * data$median[7] / data$baseline[7]#
-display[7, c('p25', 'p75')] <- 100 * sort(data[7, 4:20])[c(5, 13)] / data$baseline[7]#
-display$median[8] <- 100 * data$median[8] / data$baseline[8]#
-display[8, c('p25', 'p75')] <- 100 * sort(data[8, 4:20])[c(5, 13)] / data$baseline[8]
-names(display) <- c("Quantity", "Baseline", "Change", "25 pct.", "75 pct.")#
-print(xtable(display, digits=1), include.rownames=F)
-data
-display <- data.frame(biovar=data$biovar, baseline=data$baseline, median=data$median, p25=NA, p75=NA)#
-display[1, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[2, c('p25', 'p75')] <- sort(data[2, 4:20])[c(5, 13)]#
-display[3, c('p25', 'p75')] <- sort(data[3, 4:20])[c(5, 13)]#
-display[4, c('p25', 'p75')] <- sort(data[4, 4:20])[c(5, 13)]#
-display[5, c('p25', 'p75')] <- sort(data[5, 4:20])[c(5, 13)]#
-display$median[6] <- 100 * data$median[6] / data$baseline[6]#
-display[6, c('p25', 'p75')] <- 100 * sort(data[6, 4:20])[c(5, 13)] / data$baseline[6]#
-display$median[7] <- 100 * data$median[7] / data$baseline[7]#
-display[7, c('p25', 'p75')] <- 100 * sort(data[7, 4:20])[c(5, 13)] / data$baseline[7]#
-display$median[8] <- 100 * data$median[8] / data$baseline[8]#
-display[8, c('p25', 'p75')] <- 100 * sort(data[8, 4:20])[c(5, 13)] / data$baseline[8]#
+    breaks <- seq(-maxmap, maxmap, length.out=12)#
 #
-names(display) <- c("Quantity", "Baseline", "Change", "25 pct.", "75 pct.")#
-print(xtable(display, digits=1), include.rownames=F)
-display <- data.frame(biovar=data$biovar, baseline=data$baseline, median=data$median, p25=NA, p75=NA)#
-display[1, c('p25', 'p75')] <- sort(data[1, 4:20])[c(5, 13)]#
-display[2, c('p25', 'p75')] <- sort(data[2, 4:20])[c(5, 13)]#
-display$median[3] <- 100 * data$median[3] / data$baseline[3]#
-display[3, c('p25', 'p75')] <- 100 * sort(data[3, 4:20])[c(5, 13)] / data$baseline[3]#
-display[4, c('p25', 'p75')] <- sort(data[4, 4:20])[c(5, 13)]#
-display[5, c('p25', 'p75')] <- sort(data[5, 4:20])[c(5, 13)]#
-display$median[6] <- 100 * data$median[6] / data$baseline[6]#
-display[6, c('p25', 'p75')] <- 100 * sort(data[6, 4:20])[c(5, 13)] / data$baseline[6]#
-display$median[7] <- 100 * data$median[7] / data$baseline[7]#
-display[7, c('p25', 'p75')] <- 100 * sort(data[7, 4:20])[c(5, 13)] / data$baseline[7]#
-display$median[8] <- 100 * data$median[8] / data$baseline[8]#
-display[8, c('p25', 'p75')] <- 100 * sort(data[8, 4:20])[c(5, 13)] / data$baseline[8]#
+    png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    #image(longitude, latitude, is.na(map), col="blue", add=T)#
+    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+ii = 7
+fileprefix <- fileprefixes[ii]#
+    database <- nc_open(paste0("outputs/", fileprefix, ".nc4"))#
+    map <- ncvar_get(database, "change")#
+    conf <- ncvar_get(database, "confidence")#
 #
-names(display) <- c("Quantity", "Baseline", "Change", "25 pct.", "75 pct.")#
-print(xtable(display, digits=1), include.rownames=F)
-if (add.baseline) {#
-    for (ii in 1:nrow(data))#
-        data[ii, 3:20] <- data[ii, 3:20] + data$baseline[ii]#
-}#
+    conf[conf > 1] <- 1#
 #
-p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
-xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+    longitude <- seq(-180 + .5 / 12, 180 - .5 / 12, by=1/12)#
+    latitude <- seq(-30 + .5 / 12, 30 - .5 / 12, by=1/12)#
 #
-p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[2]) +#
-xlab("Mean Diurnal Range") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+    library(mapdata)#
 #
-## divide by 100#
-p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) / 100 + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[3] / 100) +#
-xlab("Temperature Seasonality") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+    absmap <- abs(map)#
+    maxmap <- max(absmap[absmap < Inf], na.rm=T)#
 #
-p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[4]) +#
-xlab("Max Temperature of Warmest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+    if (isprecips[ii]) {#
+        maxmap <- .5 * maxmap#
+        colors <- brewer.pal(11,"RdYlBu") #rev(brewer.pal(11,"RdYlBu")), for precip#
+    } else {#
+        colors <- rev(brewer.pal(11,"RdYlBu"))#
+    }#
 #
-p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[5]) +#
-xlab("Min Temperature of Coldest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
+    breaks <- seq(-maxmap, maxmap, length.out=12)#
 #
-p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +#
-xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[7]) +#
-xlab("Precipitation of Wettest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[8]) +#
-xlab("Precipitation of Driest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
-add.baseline <- T
-if (add.baseline) {#
-    for (ii in 1:nrow(data))#
-        data[ii, 3:20] <- data[ii, 3:20] + data$baseline[ii]#
-}#
-#
-p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +#
-xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[2]) +#
-xlab("Mean Diurnal Range") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-## divide by 100#
-p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) / 100 + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[3] / 100) +#
-xlab("Temperature Seasonality") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[4]) +#
-xlab("Max Temperature of Warmest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[5]) +#
-xlab("Min Temperature of Coldest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +#
-xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[7]) +#
-xlab("Precipitation of Wettest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +#
-    geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[8]) +#
-xlab("Precipitation of Driest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))#
-#
-multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)
+    png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
+    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    #image(longitude, latitude, is.na(map), col="blue", add=T)#
+    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()

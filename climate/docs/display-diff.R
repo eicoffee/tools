@@ -34,8 +34,9 @@ for (ii in 1:length(mains)) {
     breaks <- seq(-maxmap, maxmap, length.out=12)
 
     png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)
-    map("worldHires", ylim=c(-30, 30), mar=rep(0,4))
+    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")
     image(longitude, latitude, map, col=colors, breaks=breaks, add=T)
+    #image(longitude, latitude, is.na(map), col="blue", add=T)
     image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)
     legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)
     text(-180, 27, mains[ii], pos=4, cex=2)

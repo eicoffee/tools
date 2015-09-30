@@ -5,6 +5,8 @@ import shapefile, csv, os
 import numpy as np
 import geoshapes, product
 
+#ha_per_cell = 8605.7 # (111.32 / 12)^2 km^2
+
 variety = "arabica"
 outdir = "outputs"
 rasters = [(os.path.join(outdir, variety + "-product.nc4"), 'suitability'),
@@ -35,6 +37,7 @@ def get_values(rr, cc):
     harvloss = values[3] * values[1] / values[0] if values[1] < 0 else 0 # negative
     return np.array([values[0] / 100, posval, negval, confval, values[3], harvloss])
 
+totals = np.zeros(7)
 with open(output_path, 'w') as fp:
     writer = csv.writer(fp)
     writer.writerow(['country', 'baseline', 'increase', 'decrease', 'avgconf', 'lossperc', 'chngperc', 'harvest', 'harvlossperc'])
@@ -57,3 +60,9 @@ with open(output_path, 'w') as fp:
             continue # don't write it out
 
         writer.writerow([record[name_index], int(round(areahas[0])), int(round(areahas[1])), int(round(areahas[2])), "%.3f" % (areahas[3] / (areahas[1] - areahas[2])), round(100 * areahas[2] / areahas[0], 1), round(100 * (areahas[1] + areahas[2]) / areahas[0], 1), round(100 * areahas[5] / areahas[4], 1)])
+
+        mytotals = np.array([int(round(areahas[0])), int(round(areahas[1])), int(round(areahas[2])), round(areahas[0]) * (areahas[3] / (areahas[1] - areahas[2])), round(100 * (areahas[1] + areahas[2]) / areahas[0], 1), areahas[4], areahas[5]])
+        mytotals[np.isnan(mytotals)] = 0
+        totals += mytotals
+
+    writer.writerow(["World"] + list(totals[0:3]) + ["%.3f" % (totals[3] / totals[0]), round(100 * totals[2] / totals[0], 1), round(100 * (totals[1] + totals[2]) / totals[0], 1), totals[4], round(100 * totals[6] / totals[5], 1)])
