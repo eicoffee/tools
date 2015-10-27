@@ -1,529 +1,3 @@
-y ~ a + b | b ~ c | z ~ c + d
-y ~ A a + B b | B b ~ C c | z ~ c + d
-y ~ a + b | b - c | z ~ c + d
-terms(y ~ a + b | b - c | z ~ c + d)
-as.character(y ~ a + b | b - c | z ~ c + d)
-?grepl
-#' Combine two formulas in hierlm-format#
-#'#
-#' Return the left and right side of a new combined formula.#
-#' Left formula must be a standard formula.  Right formula may take the following forms:#
-#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
-#' a - b : A requirement that two variables be close together (typically one is a factor)#
-#' TODO:#
-#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
-#'#
-#' @param formula1 an lm-style formula#
-#' @param formula2 an additional formula or hierlm term#
-#' @return Augmented formula#
-#' @examples#
-#' combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)#
-#
-combine.formulae <- function(formula1, formula2) {#
-    chunks1 <- as.character(formula1)#
-#
-    if (is.character(formula2))#
-        if (grepl("~", formula2))#
-            formula2 <- as.formula(formula2)#
-#
-    if (is.formula(formula2)) {#
-        chunks2 <- as.character(formula2)#
-        if (chunks2[2] != chunks1[2])#
-            error("Left-hand-side variables do not match.")#
-#
-        terms1 <- get.formula.terms(formula1)#
-        terms2 <- get.formula.terms(formula2)#
-    } else {#
-        terms2 <- strsplit(formula2, "-")[[1]]#
-        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
-#
-        terms1 <- get.formula.terms(formula1)#
-    }#
-#
-    for (term in terms2)#
-        if (!(term %in% terms1))#
-            terms1 <- c(terms1, term)#
-#
-    as.formula(paste(chunks[2], "~", paste(terms1, collapse=" + ")))#
-}
-combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
-?formula
-class(y ~ x)
-#' Combine two formulas in hierlm-format#
-#'#
-#' Return the left and right side of a new combined formula.#
-#' Left formula must be a standard formula.  Right formula may take the following forms:#
-#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
-#' a - b : A requirement that two variables be close together (typically one is a factor)#
-#' TODO:#
-#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
-#'#
-#' @param formula1 an lm-style formula#
-#' @param formula2 an additional formula or hierlm term#
-#' @return Augmented formula#
-#' @examples#
-#' combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)#
-#
-combine.formulae <- function(formula1, formula2) {#
-    chunks1 <- as.character(formula1)#
-#
-    if (is.character(formula2))#
-        if (grepl("~", formula2))#
-            formula2 <- as.formula(formula2)#
-#
-    if (class(formula2) == "formula") {#
-        chunks2 <- as.character(formula2)#
-        if (chunks2[2] != chunks1[2])#
-            error("Left-hand-side variables do not match.")#
-#
-        terms1 <- get.formula.terms(formula1)#
-        terms2 <- get.formula.terms(formula2)#
-    } else {#
-        terms2 <- strsplit(formula2, "-")[[1]]#
-        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
-#
-        terms1 <- get.formula.terms(formula1)#
-    }#
-#
-    for (term in terms2)#
-        if (!(term %in% terms1))#
-            terms1 <- c(terms1, term)#
-#
-    as.formula(paste(chunks[2], "~", paste(terms1, collapse=" + ")))#
-}
-combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
-#' Extract the terms from an lm formula#
-#'#
-#' Return a list of terms in an lm formula, in the order they appear#
-#'#
-#' @param formula lm-style formula#
-#' @return Vector of the terms in the lm formula#
-#' @examples#
-#' get.formula.terms(Sepal.Length ~ Petal.Length + Species + Sepal.Width : Species)#
-#
-get.formula.terms <- function(formula) {#
-    terms <- strsplit(as.character(formula)[3], "\\+")[[1]]#
-    gsub("^\\s+|\\s+$", "", terms)#
-}
-combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
-#' Combine two formulas in hierlm-format#
-#'#
-#' Return the left and right side of a new combined formula.#
-#' Left formula must be a standard formula.  Right formula may take the following forms:#
-#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
-#' a - b : A requirement that two variables be close together (typically one is a factor)#
-#' TODO:#
-#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
-#'#
-#' @param formula1 an lm-style formula#
-#' @param formula2 an additional formula or hierlm term#
-#' @return Augmented formula#
-#' @examples#
-#' combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)#
-#
-combine.formulae <- function(formula1, formula2) {#
-    chunks1 <- as.character(formula1)#
-#
-    if (is.character(formula2))#
-        if (grepl("~", formula2))#
-            formula2 <- as.formula(formula2)#
-#
-    if (class(formula2) == "formula") {#
-        chunks2 <- as.character(formula2)#
-        if (chunks2[2] != chunks1[2])#
-            error("Left-hand-side variables do not match.")#
-#
-        terms1 <- get.formula.terms(formula1)#
-        terms2 <- get.formula.terms(formula2)#
-    } else {#
-        terms2 <- strsplit(formula2, "-")[[1]]#
-        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
-#
-        terms1 <- get.formula.terms(formula1)#
-    }#
-#
-    for (term in terms2)#
-        if (!(term %in% terms1))#
-            terms1 <- c(terms1, term)#
-#
-    as.formula(paste(chunks1[2], "~", paste(terms1, collapse=" + ")))#
-}
-combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
-?as.formula
-?env
-terms(y ~ a)
-attr(y ~ a, '.Environment')
-#' Combine two formulas in hierlm-format#
-#'#
-#' Return the left and right side of a new combined formula.#
-#' Left formula must be a standard formula.  Right formula may take the following forms:#
-#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
-#' a - b : A requirement that two variables be close together (typically one is a factor)#
-#' TODO:#
-#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
-#'#
-#' @param formula1 an lm-style formula#
-#' @param formula2 an additional formula or hierlm term#
-#' @return Augmented formula#
-#' @examples#
-#' combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)#
-#
-combine.formulae <- function(formula1, formula2) {#
-    chunks1 <- as.character(formula1)#
-#
-    if (is.character(formula2))#
-        if (grepl("~", formula2))#
-            formula2 <- as.formula(formula2)#
-#
-    if (class(formula2) == "formula") {#
-        chunks2 <- as.character(formula2)#
-        if (chunks2[2] != chunks1[2])#
-            error("Left-hand-side variables do not match.")#
-#
-        terms1 <- get.formula.terms(formula1)#
-        terms2 <- get.formula.terms(formula2)#
-    } else {#
-        terms2 <- strsplit(formula2, "-")[[1]]#
-        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
-#
-        terms1 <- get.formula.terms(formula1)#
-    }#
-#
-    for (term in terms2)#
-        if (!(term %in% terms1))#
-            terms1 <- c(terms1, term)#
-#
-    as.formula(paste(chunks1[2], "~", paste(terms1, collapse=" + ")),#
-               env=attr(formula1, '.Environment'))#
-}
-combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
-#' Combine two formulas in hierlm-format#
-#'#
-#' Return the left and right side of a new combined formula.#
-#' Left formula must be a standard formula.  Right formula may take the following forms:#
-#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
-#' a - b : A requirement that two variables be close together (typically one is a factor)#
-#' TODO:#
-#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
-#'#
-#' @param formula1 an lm-style formula#
-#' @param formula2 an additional formula or hierlm term#
-#' @return Augmented formula#
-#' @examples#
-#' combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)#
-#
-combine.formulae <- function(formula1, formula2) {#
-    chunks1 <- as.character(formula1)#
-#
-    if (is.character(formula2))#
-        if (grepl("~", formula2))#
-            formula2 <- as.formula(formula2)#
-#
-    if (class(formula2) == "formula") {#
-        chunks2 <- as.character(formula2)#
-        if (chunks2[2] != chunks1[2])#
-            error("Left-hand-side variables do not match.")#
-#
-        terms1 <- get.formula.terms(formula1)#
-        terms2 <- get.formula.terms(formula2)#
-    } else {#
-        terms2 <- strsplit(formula2, "-")[[1]]#
-        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
-#
-        terms1 <- get.formula.terms(formula1)#
-        if (attr(terms(formula1), 'intercept') == 0) {#
-            if (!("0" %in% terms1))#
-                terms1 <- c("0", terms1)#
-        } else {#
-            if (!("0" %in% terms1 && "constant" %in% terms1))#
-                terms1 <- c("0", "constant", terms1)#
-        }#
-    }#
-#
-    for (term in terms2)#
-        if (!(term %in% terms1))#
-            terms1 <- c(terms1, term)#
-#
-    as.formula(paste(chunks1[2], "~", paste(terms1, collapse=" + ")),#
-               env=attr(formula1, '.Environment'))#
-}
-combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d)
-Sepal.Length ~ Petal.Length + Species + Sepal.Width : Species | Species - . | Sepal.Width : Species - .
-as.character(Sepal.Length ~ Petal.Length + Species + Sepal.Width : Species | Species - . | Sepal.Width : Species - .)
-#' Combine two formulas in hierlm-format#
-#'#
-#' Return the left and right side of a new combined formula.#
-#' Left formula must be a standard formula.  Right formula may take the following forms:#
-#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
-#' f - b : A requirement that two variables be close together (typically one is a factor)#
-#' f - . : A requirement that a variable (or set of factors) be close to a new hyper-variable#
-#' a : f - [b or .] : A requirement that the results of an interaction be near a hyper-variable#
-#' TODO:#
-#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
-#'#
-#' @param formula1 an lm-style formula#
-#' @param formula2 an additional formula or hierlm term#
-#' @return Augmented formula#
-#' @examples#
-#' combine.formulae(combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d), "c : d - .")#
-#
-combine.formulae <- function(formula1, formula2, sep="") {#
-    chunks1 <- as.character(formula1)#
-#
-    if (is.character(formula2))#
-        if (grepl("~", formula2))#
-            formula2 <- as.formula(formula2)#
-#
-    if (class(formula2) == "formula") {#
-        chunks2 <- as.character(formula2)#
-        if (chunks2[2] != chunks1[2])#
-            error("Left-hand-side variables do not match.")#
-#
-        terms1 <- get.formula.terms(formula1)#
-        terms2 <- get.formula.terms(formula2)#
-    } else {#
-        terms2 <- strsplit(formula2, "-")[[1]]#
-        terms2 <- gsub("^\\s+|\\s+$", "", terms2)#
-        if ("." %in% terms2) {#
-            nonhyper <- terms2[terms2 != "."]#
-            if (grepl(':', nonhyper)) {#
-                subterms <- strsplit(nonhyper, ":")[[1]]#
-                subterms <- gsub("^\\s+|\\s+$", "", subterms)#
-                hyper <- paste("hyper", paste(subterms, collapse=sep), sep=sep)#
-            } else {#
-                hyper <- paste("hyper", nonhyper, sep=sep)#
-            }#
-            terms2 <- c(nonhyper, hyper)#
-        }#
-#
-        terms1 <- get.formula.terms(formula1)#
-        if (attr(terms(formula1), 'intercept') == 0) {#
-            if (!("0" %in% terms1))#
-                terms1 <- c("0", terms1)#
-        } else {#
-            if (!("0" %in% terms1 && "constant" %in% terms1))#
-                terms1 <- c("0", "constant", terms1)#
-        }#
-    }#
-#
-    for (term in terms2)#
-        if (!(term %in% terms1))#
-            terms1 <- c(terms1, term)#
-#
-    as.formula(paste(chunks1[2], "~", paste(terms1, collapse=" + ")),#
-               env=attr(formula1, '.Environment'))#
-}
-combine.formulae(combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d), "c : d - .")
-#' Combine two formulas in hierlm-format#
-#'#
-#' Return the left and right side of a new combined formula.#
-#' Left formula must be a standard formula.  Right formula may take the following forms:#
-#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
-#' f - b : A requirement that two variables be close together (typically one is a factor)#
-#' f - . : A requirement that a variable (or set of factors) be close to a new hyper-variable#
-#' a : f - [b or .] : A requirement that the results of an interaction be near a hyper-variable#
-#' TODO:#
-#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
-#'#
-#' @param formula1 an lm-style formula#
-#' @param formula2 an additional formula or hierlm term#
-#' @return Augmented formula#
-#' @examples#
-#' combine.formulae(combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d), "c : d - .")#
-#
-combine.formulae <- function(formula1, formula2, sep="") {#
-    chunks1 <- as.character(formula1)#
-#
-    if (is.character(formula2))#
-        if (grepl("~", formula2))#
-            formula2 <- as.formula(formula2)#
-#
-    if (class(formula2) == "formula") {#
-        chunks2 <- as.character(formula2)#
-        if (chunks2[2] != chunks1[2])#
-            error("Left-hand-side variables do not match.")#
-#
-        terms1 <- get.formula.terms(formula1)#
-        terms2 <- get.formula.terms(formula2)#
-    } else {#
-        terms2 <- get.hyper.terms(formula2)#
-        if (length(terms2) != 3)#
-            error(paste("Cannot understand expression:", formula2))#
-#
-        terms2 <- terms2[-3]#
-#
-        terms1 <- get.formula.terms(formula1)#
-        if (attr(terms(formula1), 'intercept') == 0) {#
-            if (!("0" %in% terms1))#
-                terms1 <- c("0", terms1)#
-        } else {#
-            if (!("0" %in% terms1 && "constant" %in% terms1))#
-                terms1 <- c("0", "constant", terms1)#
-        }#
-    }#
-#
-    for (term in terms2)#
-        if (!(term %in% terms1))#
-            terms1 <- c(terms1, term)#
-#
-    as.formula(paste(chunks1[2], "~", paste(terms1, collapse=" + ")),#
-               env=attr(formula1, '.Environment'))#
-}
-combine.formulae(combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d), "c : d - .")
-#' Get any new hyper terms from formula#
-#'#
-#' If the "a - b" formula requires the creation of a new hyper terms#
-#' (one of a or b is .), return them.#
-#'#
-#' @param formula Single component of a hierlm formula#
-#' @return Vector of c(nonhyper, hyper, is.interaction), if a new one was created;#
-#'   or c(left, right, NA) if both terms are given;#
-#'   or c() if not an "a - b" expression#
-#' @examples#
-#' get.formula.terms(Sepal.Length ~ Petal.Length + Species + Sepal.Width : Species)#
-#
-get.hyper.terms <- function(formula) {#
-    if (class(formula) == "formula")#
-        return(c())#
-#
-    terms <- strsplit(formula, "-")[[1]]#
-    if (length(terms) != 2)#
-        return(c())#
-#
-    terms <- gsub("^\\s+|\\s+$", "", terms)#
-    if ("." %in% terms) {#
-        nonhyper <- terms[terms != "."]#
-        if (grepl(':', nonhyper)) {#
-            subterms <- strsplit(nonhyper, ":")[[1]]#
-            subterms <- gsub("^\\s+|\\s+$", "", subterms)#
-            hyper <- paste("hyper", paste(subterms, collapse=sep), sep=sep)#
-            return(c(nonhyper, hyper, T))#
-        } else {#
-            hyper <- paste("hyper", nonhyper, sep=sep)#
-            return(c(nonhyper, hyper, F))#
-        }#
-    }#
-    return(c(terms, NA))#
-}
-combine.formulae(combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d), "c : d - .")
-#' Combine two formulas in hierlm-format#
-#'#
-#' Return the left and right side of a new combined formula.#
-#' Left formula must be a standard formula.  Right formula may take the following forms:#
-#' y ~ ... : an lm-style formula; the left-hand-side variables much match#
-#' f - b : A requirement that two variables be close together (typically one is a factor)#
-#' f - . : A requirement that a variable (or set of factors) be close to a new hyper-variable#
-#' a : f - [b or .] : A requirement that the results of an interaction be near a hyper-variable#
-#' TODO:#
-#' a + B : A requirement that the factors in 'a' are similar to eachother by smoothness 'B'#
-#'#
-#' @param formula1 an lm-style formula#
-#' @param formula2 an additional formula or hierlm term#
-#' @return Augmented formula#
-#' @examples#
-#' combine.formulae(combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d), "c : d - .")#
-#
-combine.formulae <- function(formula1, formula2, sep="") {#
-    chunks1 <- as.character(formula1)#
-#
-    if (is.character(formula2))#
-        if (grepl("~", formula2))#
-            formula2 <- as.formula(formula2)#
-#
-    if (class(formula2) == "formula") {#
-        chunks2 <- as.character(formula2)#
-        if (chunks2[2] != chunks1[2])#
-            error("Left-hand-side variables do not match.")#
-#
-        terms1 <- get.formula.terms(formula1)#
-        terms2 <- get.formula.terms(formula2)#
-    } else {#
-        terms2 <- get.hyper.terms(formula2, sep=sep)#
-        if (length(terms2) != 3)#
-            error(paste("Cannot understand expression:", formula2))#
-#
-        terms2 <- terms2[-3]#
-#
-        terms1 <- get.formula.terms(formula1)#
-        if (attr(terms(formula1), 'intercept') == 0) {#
-            if (!("0" %in% terms1))#
-                terms1 <- c("0", terms1)#
-        } else {#
-            if (!("0" %in% terms1 && "constant" %in% terms1))#
-                terms1 <- c("0", "constant", terms1)#
-        }#
-    }#
-#
-    for (term in terms2)#
-        if (!(term %in% terms1))#
-            terms1 <- c(terms1, term)#
-#
-    as.formula(paste(chunks1[2], "~", paste(terms1, collapse=" + ")),#
-               env=attr(formula1, '.Environment'))#
-}
-combine.formulae(combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d), "c : d - .")
-#' Get any new hyper terms from formula#
-#'#
-#' If the "a - b" formula requires the creation of a new hyper terms#
-#' (one of a or b is .), return them.#
-#'#
-#' @param formula Single component of a hierlm formula#
-#' @return Vector of c(nonhyper, hyper, is.interaction), if a new one was created;#
-#'   or c(left, right, NA) if both terms are given;#
-#'   or c() if not an "a - b" expression#
-#' @examples#
-#' get.formula.terms(Sepal.Length ~ Petal.Length + Species + Sepal.Width : Species)#
-#
-get.hyper.terms <- function(formula, sep="") {#
-    if (class(formula) == "formula")#
-        return(c())#
-#
-    terms <- strsplit(formula, "-")[[1]]#
-    if (length(terms) != 2)#
-        return(c())#
-#
-    terms <- gsub("^\\s+|\\s+$", "", terms)#
-    if ("." %in% terms) {#
-        nonhyper <- terms[terms != "."]#
-        if (grepl(':', nonhyper)) {#
-            subterms <- strsplit(nonhyper, ":")[[1]]#
-            subterms <- gsub("^\\s+|\\s+$", "", subterms)#
-            hyper <- paste("hyper", paste(subterms, collapse=sep), sep=sep)#
-            return(c(nonhyper, hyper, T))#
-        } else {#
-            hyper <- paste("hyper", nonhyper, sep=sep)#
-            return(c(nonhyper, hyper, F))#
-        }#
-    }#
-    return(c(terms, NA))#
-}
-combine.formulae(combine.formulae(combine.formulae(y ~ a + b, "b - c"), y ~ c + d), "c : d - .")
-diag(3, 3)
-diag(1, 3)
-diag(2, 3)
-#' Create fictional observations for a hyper relationship#
-#'#
-#' Return a data frame with fictional observations#
-#'#
-#' @param nonhyper name of the non-hyper column#
-#' @param hyper name of the hyper column#
-#' @param weight weight to be used in the rows#
-#' @param data a data frame for inspecting levels#
-#' @return Fictional observations in a data frame#
-#' @examples#
-#' make.hyper.noninteract("Species", "hyperSpecies", 5, iris)#
-#
-make.hyper.noninteract <- function(nonhyper, hyper, weight, data, sep="") {#
-    ## Construct extra from diagonal factor matrix#
-    extras <- diag(weight, length(unique(data[, nonhyper])))#
-    col.names(extras) <- paste(nonhyper, unique(data[, nonhyper]), sep=sep)#
-    extras <- as.data.frame(extras)#
-#
-    ## Add in the hyper column#
-    extras[, hyper] <- -weight#
-}
-make.hyper.noninteract("Species", "hyperSpecies", 5, iris)
-class(diag(3))
 ?matrix
 names(diag(3))
 names(diag(3)) = c(1, 2, 3)
@@ -4164,186 +3638,38 @@ hierlm(Sepal.Length ~ 0 + Petal.Length + Species + Sepal.Width : Species | Sepal
 summary(hierlm(Sepal.Length ~ 0 + Petal.Length + Species + Sepal.Width : Species | Sepal.Width : Species - ., iris, 2))
 100 * exp((2 * 1:50 - 1) / 10) / exp(10)
 2 * 1:50 - 1
-setwd("~/projects/coffee/global")#
-#
-source("load-dailies.R")#
-source("~/projects/research-common/R/gdd.R")#
-#
-outfile <- "globalobs-summin.RData" #"globalobs-future-summin.RData"
-gdd.low <- 0#
-gdd.high <- 33#
-#
-get.dailies <- function(variable, variety, PID, date.end) {#
-    year <- as.numeric(format(date.end, "%Y"))#
-    ## Stary by getting previous year#
-    mydata1 <- get.data(variable, variety, year-1, PID)#
-    if (nrow(mydata1) == 0)#
-        return(F)#
-#
-    if (format(date.end, "%m%d") == "0101") {#
-        return(mydata1$averages)#
-    } else {#
-        mydata2 <- get.data(variable, variety, year, PID)#
-        if (nrow(mydata2) == 0)#
-            return(F)#
-#
-        days2 <- as.numeric(date.end - as.Date(paste0(year, "-01-01")))#
-        vals2 <- mydata2$averages[1:days2]#
-        vals1 <- mydata1$averages[days2:365]#
-        return(c(vals1, vals2))#
-    }#
-}#
-#
-## Combine arabica and robusta where I wouldn't have a yield otherwise#
-records$best.areas <- records$planted#
-records$best.areas[is.na(records$best.areas)] <- records$harvested[is.na(records$best.areas)]#
-#
-records$best.yield <- records$yield#
-records$best.yield[is.na(records$best.yield)] <- records$produced[is.na(records$best.yield)] / records$best.areas[is.na(records$best.yield)]#
-#
-for (ii in which(records$variety == "combined" & is.na(records$best.yield) & !is.na(records$best.areas))) {#
-    print(ii / nrow(records))#
-    ## Try to match this up#
-    splitout <- subset(records, date.start == records$date.start[ii] &#
-                           date.end == records$date.end[ii] &#
-                               region == records$region[ii] &#
-                                   variety != "combined")#
-    if (sum(!is.na(splitout$best.yield)) == 0) {#
-        ## We aren't using these for anything else!#
-        records$best.yield[ii] <- sum(splitout$produced) / records$best.areas[ii]#
-    }#
-}#
-#
-data <- data.frame(region=c(), variety=c(), year=c(), produced=c(), yield=c(), PID=c(), frosts=c(), gdds=c(), kdds=c(), summin=c(), precip=c())#
-#
-for (ii in 1:nrow(records)) {#
-    if (is.na(records$best.yield[ii]))#
-        next#
-#
-    region <- as.character(records$region[ii])#
-    variety <- as.character(records$variety[ii])#
-#
-    PID <- get.PID(region)#
-    if (length(PID) == 0) {#
-        print(paste("Cannot find region", region))#
-        next#
-    }#
-#
-    print(c(ii / nrow(records), region, variety))#
-#
-    tmins <- get.dailies("tmin", variety, PID, records$date.end[ii])#
-    if (class(tmins) == "logical")#
-        next#
-    tmaxs <- get.dailies("tmax", variety, PID, records$date.end[ii])#
-    prates <- get.dailies("prate", variety, PID, records$date.end[ii])#
-#
-    ## Count GDDs in previous 12 months#
-    gddkdd <- get.gddkdd(tmins, tmaxs, gdd.low, gdd.high)#
-#
-    ## Also count "frost points": cummulative degrees below 0#
-    frosts <- -sum(tmins[tmins < min(0, gdd.low)])#
-#
-    summin <- sum(tmins)#
-#
-    precip <- sum(prates)#
-#
-    data <- rbind(data, data.frame(region, variety, year=as.numeric(format(records$date.end[ii], "%Y")), produced=records$produced[ii], yield=records$best.yield[ii], PID, frosts, gdds=gddkdd[1], kdds=gddkdd[2], summin, precip))#
-}
-outfile
-save(data, file=outfile)
-## Save in prepared form#
-data2 <- data#
-data2$gdds <- data2$gdds / 1000#
-data2$kdds <- data2$kdds / 1000#
-data2$summin <- data2$summin / 365.25#
-names(data2) <- c("region", "variety", "year", "produced", "yield", "PID", "frosts", "gdd1000", "kdd1000", "avgmin", "precip")#
-#
-write.csv(data2, file="../tools/production/baseline.csv", row.names=F)
-setwd("~/projects/coffee/tools/production")#
-#
-library(maps)#
-source("~/projects/research-common/R/drawmap.R")#
-#
-changes <- read.csv("changes.csv")#
-#
-map("world", ylim=c(-30, 30))#
-draw.map("world", changes$country, changes$change, position="bottomleft", add=T, digits=2)
-setwd("~/projects/coffee/global")
-load("globalobs-future-summin.RData")
-data[1,]
-sum(data$region == "Colombia")
-get.PID
-get.PID("Colombia")
-setwd("~/projects/coffee/tools/climate")#
+arima
+arima()
+setwd("~/projects/coffee/database")#
 #
 library(ncdf4)#
 library(maps)#
 library(RColorBrewer)#
 #
-mains <- c("Mean temperature", "Diurnal range", "Maximum temperature", "Minimum temperature", "Annual Precipitation", "Wettest month precipitation", "Driest month precipitation")#
-fileprefixes <- c("bio-1", "bio-2", "bio-5", "bio-6", "bio-12", "bio-13", "bio-14")#
-isprecips <- c(rep(F, 4), rep(T, 3))
-ii = 5
-fileprefix <- fileprefixes[ii]#
-    database <- nc_open(paste0("outputs/", fileprefix, ".nc4"))#
-    map <- ncvar_get(database, "change")#
-    conf <- ncvar_get(database, "confidence")#
-#
-    conf[conf > 1] <- 1#
-#
-    longitude <- seq(-180 + .5 / 12, 180 - .5 / 12, by=1/12)#
-    latitude <- seq(-30 + .5 / 12, 30 - .5 / 12, by=1/12)#
-#
-    library(mapdata)#
-#
-    absmap <- abs(map)#
-    maxmap <- max(absmap[absmap < Inf], na.rm=T)#
-#
-    if (isprecips[ii]) {#
-        maxmap <- .5 * maxmap#
-        colors <- brewer.pal(11,"RdYlBu") #rev(brewer.pal(11,"RdYlBu")), for precip#
-    } else {#
-        colors <- rev(brewer.pal(11,"RdYlBu"))#
-    }#
-#
-    breaks <- seq(-maxmap, maxmap, length.out=12)
+database <- nc_open("harvestarea.nc4")#
+map <- ncvar_get(database, "arabica")#
+map[map > 150] <- 150
+longitude <- ncvar_get(database, "lon")#
+latitude <- ncvar_get(database, "lat")
 map("worldHires", ylim=c(-30, 30), mar=rep(0,4))#
-    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
-    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
-    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
-    text(-180, 27, mains[ii], pos=4, cex=2)
-map[1,1,]
-map[1,1
-]
-png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
-    map("worldHires", ylim=c(-30, 30), mar=rep(0,4))#
-    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
-    image(longitude, latitude, is.na(map), col="blue", add=T)#
-    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
-    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
-    text(-180, 27, mains[ii], pos=4, cex=2)#
-    dev.off()
-dim(map)
-map[1,]
-map[,1]
-dim(is.na(map))
-map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="blue")
-png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
-    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="blue")#
-    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
-    #image(longitude, latitude, is.na(map), col="blue", add=T)#
-    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
-    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
-    text(-180, 27, mains[ii], pos=4, cex=2)#
-    dev.off()
-png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
-    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
-    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
-    #image(longitude, latitude, is.na(map), col="blue", add=T)#
-    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
-    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
-    text(-180, 27, mains[ii], pos=4, cex=2)#
-    dev.off()
+image(longitude, latitude, map, col=brewer.pal(9,"YlGn"), add=T)
+library(mapdata)
+setwd("~/projects/coffee/tools/climate")#
+#
+library(ncdf4)#
+library(maps)#
+library(RColorBrewer)#
+source("../lib/mapper.R")#
+#
+do.versb <- T#
+#
+mains <- c("Mean temperature", "Diurnal range", "Maximum temperature", "Minimum temperature", "Annual Precipitation", "Wettest month precipitation", "Driest month precipitation")#
+if (do.versb) {#
+    fileprefixes <- c("bio-1b", "bio-2b", "bio-5b", "bio-6b", "bio-12b", "bio-13b", "bio-14b")#
+} else {#
+    fileprefixes <- c("bio-1", "bio-2", "bio-5", "bio-6", "bio-12", "bio-13", "bio-14")#
+}#
+isprecips <- c(rep(F, 4), rep(T, 3))
 ii = 1
 fileprefix <- fileprefixes[ii]#
     database <- nc_open(paste0("outputs/", fileprefix, ".nc4"))#
@@ -4367,18 +3693,173 @@ fileprefix <- fileprefixes[ii]#
         colors <- rev(brewer.pal(11,"RdYlBu"))#
     }#
 #
-    breaks <- seq(-maxmap, maxmap, length.out=12)#
+    breaks <- seq(-maxmap, maxmap, length.out=12)
+### NEW MAP GENERATION: INCORPORATE BELOW!#
+    image(seq(-169.5, 61.5, length.out=2079), seq(-1.035, 1.0, length.out=900),#
+          map, col=colors, breaks=breaks)#
+    addMap(border="#00000060")
+image(seq(-169.5, 61.5, length.out=2079), seq(-1.035, 1.0, length.out=900),#
+          map, col=colors, breaks=breaks, asp=1)
+image(seq(-169.5, 61.5, length.out=2079) * pi / 180, seq(-1.035, 1.0, length.out=900),#
+          map, col=colors, breaks=breaks, asp=1)
+addMap(border="#00000060")
+plotMap <- function(border) {#
+    par(mar=rep(0, 4))#
 #
-    png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
-    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
-    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
-    #image(longitude, latitude, is.na(map), col="blue", add=T)#
-    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    oldshape.gp <- oldshape#
+    oldshape.gp$X <- oldshape.gp$X - 1.5#
+    oldshape.gp$X <- oldshape.gp$X * pi / 180#
+    oldshape.gp$Y <- 2 * sin(oldshape.gp$Y * pi / 180)#
+    oldshape.gp$Y[oldshape.gp$Y > 0] <- oldshape.gp$Y[oldshape.gp$Y > 0] - .05 * sin(oldshape.gp$Y[oldshape.gp$Y > 0] * pi)#
+    oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] <- oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] - .015 * sin((oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] + .25) * 2 * pi)#
+    plotPolys(oldshape.gp, ylim=c(-1, 1), xlim=c(-165, 65), border=border)#
+#
+    addMap2(border)#
+}#
+#
+addMap <- function(border) {#
+    oldshape.gp <- oldshape#
+    oldshape.gp$X <- oldshape.gp$X - 1.5#
+    oldshape.gp$X <- oldshape.gp$X * pi / 180#
+    oldshape.gp$Y <- 2 * sin(oldshape.gp$Y * pi / 180)#
+    oldshape.gp$Y[oldshape.gp$Y > 0] <- oldshape.gp$Y[oldshape.gp$Y > 0] - .05 * sin(oldshape.gp$Y[oldshape.gp$Y > 0] * pi)#
+    oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] <- oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] - .015 * sin((oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(oldshape.gp, border=border)#
+#
+    addMap2(border)#
+}#
+#
+addMap2 <- function(border) {#
+    oldshape2.gp <- oldshape#
+    oldshape2.gp$X <- oldshape2.gp$X - 265 + 30 + 1#
+    ##oldshape2.gp$X <- oldshape2.gp$X + .01 * (oldshape2.gp$X - -170)#
+    oldshape2.gp$X <- oldshape2.gp$X * pi / 180#
+    oldshape2.gp$Y <- 2 * sin(oldshape2.gp$Y * pi / 180)#
+    oldshape2.gp$Y[oldshape2.gp$Y > 0] <- oldshape2.gp$Y[oldshape2.gp$Y > 0] - .05 * sin(oldshape2.gp$Y[oldshape2.gp$Y > 0] * pi)#
+    oldshape2.gp$Y[oldshape2.gp$Y > -.25 & oldshape2.gp$Y < .25] <- oldshape2.gp$Y[oldshape2.gp$Y > -.25 & oldshape2.gp$Y < .25] - .015 * sin((oldshape2.gp$Y[oldshape2.gp$Y > -.25 & oldshape2.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(oldshape2.gp, border=border)#
+#
+    nudged.gp <- ausshape#
+    nudged.gp$X <- nudged.gp$X - 265 + 30 + 1#
+    nudged.gp$X <- nudged.gp$X * pi / 180#
+    nudged.gp$Y <- 2 * sin(nudged.gp$Y * pi / 180)#
+    nudged.gp$Y[nudged.gp$Y > 0] <- nudged.gp$Y[nudged.gp$Y > 0] - .05 * sin(nudged.gp$Y[nudged.gp$Y > 0] * pi)#
+    nudged.gp$Y[nudged.gp$Y > -.25 & nudged.gp$Y < .25] <- nudged.gp$Y[nudged.gp$Y > -.25 & nudged.gp$Y < .25] - .015 * sin((nudged.gp$Y[nudged.gp$Y > -.25 & nudged.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(nudged.gp, border=border)#
+#
+    shiftright.gp <- shiftright#
+    shiftright.gp$X <- shiftright.gp$X + .15#
+    shiftright.gp$X <- shiftright.gp$X * pi / 180#
+    shiftright.gp$Y <- 2 * sin(shiftright.gp$Y * pi / 180)#
+    shiftright.gp$Y[shiftright.gp$Y > 0] <- shiftright.gp$Y[shiftright.gp$Y > 0] - .05 * sin(shiftright.gp$Y[shiftright.gp$Y > 0] * pi)#
+    shiftright.gp$Y[shiftright.gp$Y > -.25 & shiftright.gp$Y < .25] <- shiftright.gp$Y[shiftright.gp$Y > -.25 & shiftright.gp$Y < .25] - .015 * sin((shiftright.gp$Y[shiftright.gp$Y > -.25 & shiftright.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(shiftright.gp, border=border)#
+#
+    shiftleft.gp <- shiftleft#
+    shiftleft.gp$X <- shiftleft.gp$X - 5 + 1#
+    shiftleft.gp$X <- shiftleft.gp$X * pi / 180#
+    shiftleft.gp$Y <- 2 * sin(shiftleft.gp$Y * pi / 180)#
+    shiftleft.gp$Y[shiftleft.gp$Y > 0] <- shiftleft.gp$Y[shiftleft.gp$Y > 0] - .05 * sin(shiftleft.gp$Y[shiftleft.gp$Y > 0] * pi)#
+    shiftleft.gp$Y[shiftleft.gp$Y > -.25 & shiftleft.gp$Y < .25] <- shiftleft.gp$Y[shiftleft.gp$Y > -.25 & shiftleft.gp$Y < .25] - .015 * sin((shiftleft.gp$Y[shiftleft.gp$Y > -.25 & shiftleft.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(shiftleft.gp, border=border)#
+#
+    dropped.gp <- hawshape#
+    dropped.gp$X <- dropped.gp$X + 58.1#
+    dropped.gp$X <- dropped.gp$X * pi / 180#
+    dropped.gp$Y <- dropped.gp$Y + .7#
+    dropped.gp$Y <- 2 * sin((dropped.gp$Y - 2) * pi / 180)#
+    addPolys(dropped.gp, border=border)#
+}#
+#
+##addSeams
+image(seq(-169.5, 61.5, length.out=2079) * pi / 180, seq(-1.035, 1.0, length.out=900),#
+          map, col=colors, breaks=breaks, asp=1)
+addMap(border="#00000060")
+image(seq(-169.5, 61.5, length.out=2079) * pi / 180, seq(-1.035, 1.0, length.out=900),#
+          map, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1))
+addMap(border="#00000060")
+addSeams <- function(col) {#
+    lines(c(-1.75, -.8, -.8), c(1, -.75, -1), col=col)#
+    lines(c(.5, .5, 0, 0), c(1, .4, .3, -1), col=col)#
+    lines(c(-1.5, -2, -2, -1.5), c(.5, .5, .7, .7), col=col)#
+}
+addSeams(col="#00000040")
+addSeams <- function(col) {#
+    lines(c(-1.65, -.8, -.8), c(1, -.75, -1), col=col)#
+    lines(c(-.5, -.5, 0, 0), c(1, .4, .3, -1), col=col)#
+    lines(c(-1.6, -1.9, -1.9, -1.6, -1.6), c(.55, .55, .75, .75, .55), col=col)#
+}
+addSeams(col="#00000040")
+addSeams <- function(col) {#
+    lines(c(-1.65, -.8, -.8), c(1, -.75, -1), col=col)#
+    lines(c(-.5, -.5, 0, 0), c(1, .4, -.3, -1), col=col)#
+    lines(c(-1.65, -1.8, -1.8, -1.65, -1.65), c(.55, .55, .75, .75, .55), col=col)#
+}
+addSeams(col="#00000040")
+addSeams <- function(col) {#
+    ## Left old to New#
+    lines(c(-1.65, -.8, -.8), c(1, -.75, -1), col=col)#
+    ## New to right old#
+    lines(c(-.5, -.5, 0, 0), c(1, .4, -.25, -1), col=col)#
+    ## Hawaii#
+    lines(c(-1.65, -1.85, -1.85, -1.65, -1.65), c(.55, .55, .75, .75, .55), col=col)#
+}
+addSeams(col="#00000040")
+dim(map)
+mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)))#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
     legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
-    text(-180, 27, mains[ii], pos=4, cex=2)#
-    dev.off()
-ii = 3
-fileprefix <- fileprefixes[ii]#
+    text(-180, 27, mains[ii], pos=4, cex=2)
+mapperImage <- function(array, colors, breaks=NULL) {#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1))#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1))#
+    }#
+}
+mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)))#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), add=add)#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), add=add)#
+    }#
+}
+mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)
+addMap(border="#00000060")#
+    addSeams(col="#00000040")
+addSeams <- function(col) {#
+    ## Left old to New#
+    lines(c(-1.65, -.8, -.8), c(1, -.75, -1), col=col)#
+    ## New to right old#
+    lines(c(-.5, -.5, 0, 0), c(1, .4, -.25, -1), col=col)#
+    ## Hawaii#
+    lines(c(-1.625, -1.825, -1.825, -1.625, -1.625), c(.55, .55, .75, .75, .55), col=col)#
+}
+for (ii in 1:length(mains)) {#
+    fileprefix <- fileprefixes[ii]#
     database <- nc_open(paste0("outputs/", fileprefix, ".nc4"))#
     map <- ncvar_get(database, "change")#
     conf <- ncvar_get(database, "confidence")#
@@ -4403,15 +3884,481 @@ fileprefix <- fileprefixes[ii]#
     breaks <- seq(-maxmap, maxmap, length.out=12)#
 #
     png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
-    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
-    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
-    #image(longitude, latitude, is.na(map), col="blue", add=T)#
-    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()#
+}
+warnings()
+fileprefix
+mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)
+addMap(border="#00000060")#
+    addSeams(col="#00000040")
+legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
     legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
     text(-180, 27, mains[ii], pos=4, cex=2)#
     dev.off()
-ii = 7
-fileprefix <- fileprefixes[ii]#
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    #mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    #addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    #addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), xaxt="n", yaxt="n", add=add)#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), xaxt="n", yaxt="n", add=add)#
+    }#
+}
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    #addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+?addPolys
+plotMap <- function(border) {#
+    par(mar=rep(0, 4))#
+#
+    oldshape.gp <- oldshape#
+    oldshape.gp$X <- oldshape.gp$X - 1.5#
+    oldshape.gp$X <- oldshape.gp$X * pi / 180#
+    oldshape.gp$Y <- 2 * sin(oldshape.gp$Y * pi / 180)#
+    oldshape.gp$Y[oldshape.gp$Y > 0] <- oldshape.gp$Y[oldshape.gp$Y > 0] - .05 * sin(oldshape.gp$Y[oldshape.gp$Y > 0] * pi)#
+    oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] <- oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] - .015 * sin((oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] + .25) * 2 * pi)#
+    plotPolys(oldshape.gp, ylim=c(-1, 1), xlim=c(-165, 65), border=border)#
+#
+    addMap2(border)#
+}#
+#
+addMap <- function(border) {#
+    oldshape.gp <- oldshape#
+    oldshape.gp$X <- oldshape.gp$X - 1.5#
+    oldshape.gp$X <- oldshape.gp$X * pi / 180#
+    oldshape.gp$Y <- 2 * sin(oldshape.gp$Y * pi / 180)#
+    oldshape.gp$Y[oldshape.gp$Y > 0] <- oldshape.gp$Y[oldshape.gp$Y > 0] - .05 * sin(oldshape.gp$Y[oldshape.gp$Y > 0] * pi)#
+    oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] <- oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] - .015 * sin((oldshape.gp$Y[oldshape.gp$Y > -.25 & oldshape.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(oldshape.gp, border=border, col="#00000000")#
+#
+    addMap2(border)#
+}#
+#
+addMap2 <- function(border) {#
+    oldshape2.gp <- oldshape#
+    oldshape2.gp$X <- oldshape2.gp$X - 265 + 30 + 1#
+    ##oldshape2.gp$X <- oldshape2.gp$X + .01 * (oldshape2.gp$X - -170)#
+    oldshape2.gp$X <- oldshape2.gp$X * pi / 180#
+    oldshape2.gp$Y <- 2 * sin(oldshape2.gp$Y * pi / 180)#
+    oldshape2.gp$Y[oldshape2.gp$Y > 0] <- oldshape2.gp$Y[oldshape2.gp$Y > 0] - .05 * sin(oldshape2.gp$Y[oldshape2.gp$Y > 0] * pi)#
+    oldshape2.gp$Y[oldshape2.gp$Y > -.25 & oldshape2.gp$Y < .25] <- oldshape2.gp$Y[oldshape2.gp$Y > -.25 & oldshape2.gp$Y < .25] - .015 * sin((oldshape2.gp$Y[oldshape2.gp$Y > -.25 & oldshape2.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(oldshape2.gp, border=border, col="#00000000")#
+#
+    nudged.gp <- ausshape#
+    nudged.gp$X <- nudged.gp$X - 265 + 30 + 1#
+    nudged.gp$X <- nudged.gp$X * pi / 180#
+    nudged.gp$Y <- 2 * sin(nudged.gp$Y * pi / 180)#
+    nudged.gp$Y[nudged.gp$Y > 0] <- nudged.gp$Y[nudged.gp$Y > 0] - .05 * sin(nudged.gp$Y[nudged.gp$Y > 0] * pi)#
+    nudged.gp$Y[nudged.gp$Y > -.25 & nudged.gp$Y < .25] <- nudged.gp$Y[nudged.gp$Y > -.25 & nudged.gp$Y < .25] - .015 * sin((nudged.gp$Y[nudged.gp$Y > -.25 & nudged.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(nudged.gp, border=border, col="#00000000")#
+#
+    shiftright.gp <- shiftright#
+    shiftright.gp$X <- shiftright.gp$X + .15#
+    shiftright.gp$X <- shiftright.gp$X * pi / 180#
+    shiftright.gp$Y <- 2 * sin(shiftright.gp$Y * pi / 180)#
+    shiftright.gp$Y[shiftright.gp$Y > 0] <- shiftright.gp$Y[shiftright.gp$Y > 0] - .05 * sin(shiftright.gp$Y[shiftright.gp$Y > 0] * pi)#
+    shiftright.gp$Y[shiftright.gp$Y > -.25 & shiftright.gp$Y < .25] <- shiftright.gp$Y[shiftright.gp$Y > -.25 & shiftright.gp$Y < .25] - .015 * sin((shiftright.gp$Y[shiftright.gp$Y > -.25 & shiftright.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(shiftright.gp, border=border, col="#00000000")#
+#
+    shiftleft.gp <- shiftleft#
+    shiftleft.gp$X <- shiftleft.gp$X - 5 + 1#
+    shiftleft.gp$X <- shiftleft.gp$X * pi / 180#
+    shiftleft.gp$Y <- 2 * sin(shiftleft.gp$Y * pi / 180)#
+    shiftleft.gp$Y[shiftleft.gp$Y > 0] <- shiftleft.gp$Y[shiftleft.gp$Y > 0] - .05 * sin(shiftleft.gp$Y[shiftleft.gp$Y > 0] * pi)#
+    shiftleft.gp$Y[shiftleft.gp$Y > -.25 & shiftleft.gp$Y < .25] <- shiftleft.gp$Y[shiftleft.gp$Y > -.25 & shiftleft.gp$Y < .25] - .015 * sin((shiftleft.gp$Y[shiftleft.gp$Y > -.25 & shiftleft.gp$Y < .25] + .25) * 2 * pi)#
+    addPolys(shiftleft.gp, border=border, col="#00000000")#
+#
+    dropped.gp <- hawshape#
+    dropped.gp$X <- dropped.gp$X + 58.1#
+    dropped.gp$X <- dropped.gp$X * pi / 180#
+    dropped.gp$Y <- dropped.gp$Y + .7#
+    dropped.gp$Y <- 2 * sin((dropped.gp$Y - 2) * pi / 180)#
+    addPolys(dropped.gp, border=border, col="#00000000")#
+}#
+#
+addSeams <- function(col) {#
+    ## Left old to New#
+    lines(c(-1.65, -.8, -.8), c(1, -.75, -1), col=col)#
+    ## New to right old#
+    lines(c(-.5, -.5, 0, 0), c(1, .4, -.25, -1), col=col)#
+    ## Hawaii#
+    lines(c(-1.625, -1.825, -1.825, -1.625, -1.625), c(.55, .55, .75, .75, .55), col=col)#
+}#
+#
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), xaxt="n", yaxt="n", add=add)#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), xaxt="n", yaxt="n", add=add)#
+    }#
+}
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), xaxt="n", yaxt="n", add=add)#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), xaxt="n", yaxt="n", add=add)#
+    }#
+    par(usr=c(-3, 1, -1, 1))#
+}
+mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    par(usr=c(-3, 1, -1, 1))#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), xaxt="n", yaxt="n", add=add)#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), xaxt="n", yaxt="n", add=add)#
+    }#
+}
+mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")
+mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    par(usr=c(-3, 1, -1, 1))#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), add=add) # xaxt="n", yaxt="n"#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), add=add) # xaxt="n", yaxt="n",#
+    }#
+}
+mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")
+png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=2079, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    ##par(usr=c(-3, 1, -1, 1))#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), add=add) # xaxt="n", yaxt="n"#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), xlim=c(-3, 1), add=add) # xaxt="n", yaxt="n",#
+    }#
+}
+png(paste0("outputs/", fileprefix, ".png"), width=2079, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1700, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), xlim=c(-2.95, 1.05), add=add) # xaxt="n", yaxt="n"#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), xlim=c(-2.95, 1.05), add=add) # xaxt="n", yaxt="n",#
+    }#
+}
+png(paste0("outputs/", fileprefix, ".png"), width=1670, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+mapperImage <- function(array, colors, breaks=NULL, add=F) {#
+    if (is.null(breaks)) {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, asp=1, ylim=c(-1, 1), xlim=c(-2.95, 1.05), add=add, xaxt="n", yaxt="n", xlab="", ylab="")#
+    } else {#
+        image(seq(-169.5, 61.5, length.out=dim(map)[1]) * pi / 180, seq(-1.035, 1.0, length.out=dim(map)[2]),#
+              array, col=colors, breaks=breaks, asp=1, ylim=c(-1, 1), xlim=c(-2.95, 1.05), add=add, xaxt="n", yaxt="n", xlab="", ylab="")#
+    }#
+}
+png(paste0("outputs/", fileprefix, ".png"), width=1670, height=900)#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1670, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1690, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1750, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1800, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1850, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=2)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1850, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
+    text(-180, 27, mains[ii], pos=4, cex=3)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1850, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=2)#
+    text(-2.94, -.5, mains[ii], pos=4, cex=2.5)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1850, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.7)#
+    text(-3.05, -.2, mains[ii], pos=4, cex=2.5)#
+    dev.off()
+png(paste0("outputs/", fileprefix, ".png"), width=1850, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.7)#
+    text(-3.0, -.3, mains[ii], pos=4, cex=2.5)#
+    dev.off()
+for (ii in 1:length(mains)) {#
+    fileprefix <- fileprefixes[ii]#
     database <- nc_open(paste0("outputs/", fileprefix, ".nc4"))#
     map <- ncvar_get(database, "change")#
     conf <- ncvar_get(database, "confidence")#
@@ -4435,11 +4382,18 @@ fileprefix <- fileprefixes[ii]#
 #
     breaks <- seq(-maxmap, maxmap, length.out=12)#
 #
-    png(paste0("outputs/", fileprefix, ".png"), width=4320/2, height=400)#
-    map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
-    image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
-    #image(longitude, latitude, is.na(map), col="blue", add=T)#
-    image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
-    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.5)#
-    text(-180, 27, mains[ii], pos=4, cex=2)#
-    dev.off()
+    png(paste0("outputs/", fileprefix, ".png"), width=1850, height=900)#
+    par(mar=c(0, 0, 0, 0))#
+    mapperImage(map, colors, breaks=breaks)#
+    mapperImage(conf, rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    addMap(border="#00000060")#
+    addSeams(col="#00000040")#
+#
+    ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4), bg="#8080FF")#
+    ##image(longitude, latitude, map, col=colors, breaks=breaks, add=T)#
+    ##image(longitude, latitude, is.na(map), col="blue", add=T)#
+    ##image(longitude, latitude, conf, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)#
+    legend("bottomleft", legend=round((breaks[-1] + breaks[-12]) / 2, digits=2), fill=colors, cex=1.7)#
+    text(-3.0, -.3, mains[ii], pos=4, cex=2.5)#
+    dev.off()#
+}
