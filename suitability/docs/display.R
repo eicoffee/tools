@@ -6,12 +6,11 @@ library(RColorBrewer)
 library(raster)
 source("intake/lib.R") # now up in coffee/tools
 
-do.rescale <- T #F
-fileprefix <- "robusta" #"robusta-product"
+do.rescale <- F #T
+fileprefix <- "robusta-product" #"robusta"
 
 database <- nc_open(paste0("suitability/outputs/", fileprefix, ".nc4"))
 map <- ncvar_get(database, "suitability")
-
 
 if (do.rescale) {
     quantile(log(map[map > 0 & map < Inf]) / 50)

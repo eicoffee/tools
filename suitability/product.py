@@ -29,6 +29,8 @@ def get_bayes_array(nc4path, variable='suitability'):
     return latitude, longitude, array
 
 def product(latitude, longitude, bayes_array, gaez_grid, rr, cc):
+    if gaez_grid.getll_raw(latitude[rr], longitude[cc]) == 0:
+        return 0 # even if other is inf (would otherwise give 0 * inf = nan)
     return gaez_grid.getll_raw(latitude[rr], longitude[cc]) * bayes_array[rr, cc] / (1 + bayes_array[rr, cc])
 
 def all_products(latitude, longitude, bayes_array, gaez_grid):
@@ -67,11 +69,19 @@ def write_nc4(outpath, latitude, longitude, array, units="index (0-100)", confs=
 
 
 if __name__ == '__main__':
+    variety = 'robusta'
     outdir = "outputs"
 
-    grid_gaez = get_gaez_grid("../data/sources/gaez/constraints-arabica-irrig-high-baseline.zip")
-    latitude, longitude, suitability = get_bayes_array(os.path.join(outdir, "robusta.nc4"))
+    grid_gaez = get_gaez_grid("../data/sources/gaez/constraints-" + variety + "-irrig-high-baseline.zip")
+    latitude, longitude, suitability = get_bayes_array(os.path.join(outdir, variety + ".nc4"))
+
+    #print suitability.shape
+    #print longitude[3126], latitude[554]
+    #print grid_gaez.nrows, grid_gaez.ncols
+
+    #print grid_gaez.getll_raw(latitude[554], longitude[3126])
+    #print suitability[554, 3126]
 
     suitability = all_products(latitude, longitude, suitability, grid_gaez)
 
-    write_nc4(os.path.join(outdir, "robusta-product.nc4"), latitude, longitude, suitability)
+    write_nc4(os.path.join(outdir, variety + "-product.nc4"), latitude, longitude, suitability)
