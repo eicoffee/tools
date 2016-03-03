@@ -4,8 +4,8 @@ library(ggplot2)
 library(grid)
 library(xtable)
 
-filename <- "tropics.csv" # "colombia.csv"
-add.baseline <- T
+filename <- "colombia.csv" #"tropics.csv"
+add.baseline <- F # T (for tropics)
 
 # Multiple plot function
 #
@@ -80,35 +80,35 @@ if (add.baseline) {
 
 p1 <- ggplot(data.frame(x=as.numeric(data[1, 4:20]) + .05 * rnorm(17)), aes(x=x)) +
     geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[1]) +
-xlab("Annual Mean Temperature") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+xlab("Annual Mean Temperature (°C)") + ylab("density") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
 
 p2 <- ggplot(data.frame(x=as.numeric(data[2, 4:20]) + .05 * rnorm(17)), aes(x=x)) +
     geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[2]) +
-xlab("Mean Diurnal Range") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+xlab("Mean Diurnal Range (°C)") + ylab("density") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
 
 ## divide by 100
 p3 <- ggplot(data.frame(x=as.numeric(data[3, 4:20]) / 100 + .05 * rnorm(17)), aes(x=x)) +
     geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[3] / 100) +
-xlab("Temperature Seasonality") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+xlab("Temperature Seasonality (%)") + ylab("density") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
 
 p4 <- ggplot(data.frame(x=as.numeric(data[4, 4:20]) + .05 * rnorm(17)), aes(x=x)) +
     geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[4]) +
-xlab("Max Temperature of Warmest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+xlab("Max Temperature of Warmest Month (°C)") + ylab("density") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
 
 p5 <- ggplot(data.frame(x=as.numeric(data[5, 4:20]) + .05 * rnorm(17)), aes(x=x)) +
     geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[5]) +
-xlab("Min Temperature of Coldest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+xlab("Min Temperature of Coldest Month (°C)") + ylab("density") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
 
 p6 <- ggplot(data.frame(x=as.numeric(data[6, 4:20]) + .05 * rnorm(17)), aes(x=x)) +
     geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[6]) +
-xlab("Annual Precipitation") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+xlab("Annual Precipitation (mm)") + ylab("density") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
 
 p7 <- ggplot(data.frame(x=as.numeric(data[7, 4:20]) + .05 * rnorm(17)), aes(x=x)) +
     geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[7]) +
-xlab("Precipitation of Wettest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+xlab("Precipitation of Wettest Month (mm)") + ylab("density") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
 
 p8 <- ggplot(data.frame(x=as.numeric(data[8, 4:20]) + .05 * rnorm(17)), aes(x=x)) +
     geom_density(alpha=.2, fill="#FF6666") + geom_rug() + geom_vline(colour='red', xintercept=data$baseline[8]) +
-xlab("Precipitation of Driest Month") + ylab("") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
+xlab("Precipitation of Driest Month (mm)") + ylab("density") + theme(plot.margin=unit(c(.5,.5,-.1,.5), "cm"))
 
 multiplot(p1, p4, p5, p2, p6, p7, p8, p3, cols=2)

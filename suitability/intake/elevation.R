@@ -3,7 +3,7 @@ setwd("~/projects/coffee/tools")
 library(ncdf4)
 library(raster)
 library(ggplot2)
-source("intake/lib.R")
+source("suitability/intake/lib.R")
 
 do.displays <- F
 
