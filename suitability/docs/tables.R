@@ -77,11 +77,6 @@ table <- table[, c("country", "baseline", "increase", "decrease", "avgconf", "lo
 
 ## Make barchart
 
-## XXX: Fix calculation error, until redo csvs
-table$baseline <- table$baseline / (pi^2)
-table$increase <- table$increase / (pi^2)
-table$decrease <- table$decrease / (pi^2)
-
 ## Get order right and fix Cote d'Ivoire and Sao Tome and Principe
 table$harvest[is.na(table$harvest)] <- 0
 
@@ -118,7 +113,8 @@ ggplot(data, aes(x=country, fill=group)) +
                 xlab("") + ylab("Suitability and changes") +
                     scale_fill_discrete(name="", breaks=c("Current cultivation", "Baseline suitability", "Suitability change"))
 
-
+ggsave("new.pdf", width=7, height=4)
+error()
 ## Make table
 
 names(table) <- c("Country", "Baseline (Ha)", "Increase (Ha)", "Decrease (Ha)", "Conf. (%)", "Loss (%)", "Chng. (%)", "Harvest (Ha)", "H. Loss (%)")
