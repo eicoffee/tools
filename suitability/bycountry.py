@@ -36,7 +36,7 @@ def get_values(rr, cc):
     negval = values[1] / 100 if values[1] < 0 else 0
     posconf = abs(values[1]) * values[2] if values[1] > 0 else 0 # is x100 relative for percent
     negconf = abs(values[1]) * values[2] if values[1] < 0 else 0
-    harvloss = values[3] * values[1] / values[0] if values[1] < 0 else 0 # area * change / current; negative
+    harvloss = values[3] * values[1] / values[0] if values[1] < 0 and values[0] > 0 else 0 # area * change / current; negative
     harvconf = abs(values[2]) * values[3] if values[1] < 0 else 0
     confval = abs(values[1]) * values[2] # weight confidence by area; undo / 100
     return np.array([values[0] / 100, posval, negval, confval, values[3], harvloss, posconf, negconf, harvconf])
