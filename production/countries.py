@@ -23,11 +23,11 @@ with open('multidata.csv', 'r') as fp:
         variety = countryvariety.split('-')[1]
         coeffs = bycountryvariety[countryvariety]
 
-        gdd1000 = byglobalvariety[variety]['gdd1000'] if np.isnan(coeffs['gdd1000']) else coeffs['gdd1000']
-        kdd1000 = byglobalvariety[variety]['kdd1000'] if np.isnan(coeffs['kdd1000']) else coeffs['kdd1000']
-        avgmin = byglobalvariety[variety]['avgmin'] if np.isnan(coeffs['avgmin']) else coeffs['avgmin']
-        precip = byglobalvariety[variety]['precip'] if np.isnan(coeffs['precip']) else coeffs['precip']
-        precip2 = byglobalvariety[variety]['precip2'] if np.isnan(coeffs['precip2']) else coeffs['precip2']
+        gdd1000 = byglobalvariety[variety]['gdd1000'] if np.isnan(coeffs.get('gdd1000', np.nan)) else coeffs['gdd1000']
+        kdd1000 = byglobalvariety[variety]['kdd1000'] if np.isnan(coeffs.get('kdd1000', np.nan)) else coeffs['kdd1000']
+        avgmin = byglobalvariety[variety]['avgmin'] if np.isnan(coeffs.get('avgmin', np.nan)) else coeffs['avgmin']
+        precip = byglobalvariety[variety]['precip'] if np.isnan(coeffs.get('precip', np.nan)) else coeffs['precip']
+        precip2 = byglobalvariety[variety]['precip2'] if np.isnan(coeffs.get('precip2', np.nan)) else coeffs['precip2']
 
         bycountryvariety[countryvariety] = CountryVarietyModel(gdd1000, kdd1000, avgmin, precip, precip2)
 

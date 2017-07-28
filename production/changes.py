@@ -42,7 +42,7 @@ with open('changes.csv', 'w') as fp:
                 delta_precip2 = future_precip ** 2 - baseline_precip ** 2
 
                 ckparts = key.split('-')
-                countrykey = '.'.join(ckparts[0:-1]).replace(' ', '.') + '-' + ckparts[-1]
+                countrykey = '.'.join(ckparts[0:-1]) + '-' + ckparts[-1]
 
                 change = bycountryvariety[countrykey].predict(delta_gdd1000, delta_kdd1000, delta_avgmin, delta_precip, delta_precip2)
 
