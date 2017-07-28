@@ -1,13 +1,13 @@
 ## Duplicate of research-common/R/tropict/draw_map.R
 
 oldwd <- getwd()
-setwd("~/projects/coffee/mapper")
+setwd("~/research/coffee/mapper")
 
 library(PBSmapping)
 
 do.versions <- F
 
-shape <- importShapefile("ne_50m_admin_0_countries/ne_50m_admin_0_countries")
+shape <- importShapefile("../tools/data/ne_50m_admin_0_countries/ne_50m_admin_0_countries")
 polydata <- attributes(shape)$PolyData
 
 plotPolys(shape, ylim=c(-30, 30))

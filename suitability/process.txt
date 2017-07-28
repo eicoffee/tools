@@ -1,0 +1,11 @@
+Upon adding a new data source:
+ - Add a function to intake/lib.R to load it at the correct resolution (4320 x 720)
+ - Create a script like the ones in intake/ to calculate the PDF and correlations (and run it
+ to get the corresponding files)
+ - Create a class like the ones in conditions
+
+1. suitability
+
+product
+future
+bycountry

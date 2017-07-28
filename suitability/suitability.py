@@ -100,6 +100,7 @@ if __name__ == '__main__':
 
     from conditions.soil import ConditionSoil
     from conditions.bioclim import ConditionClimate
+    from conditions.travel import ConditionTravel
     if DO_ELEVATION_LIMITS:
         from conditions.elevation_limits import ConditionElevation
     else:
@@ -113,8 +114,9 @@ if __name__ == '__main__':
     elevation = ConditionElevation()
     climate = ConditionClimate()
     latitude = ConditionLatitude()
+    travel = ConditionTravel()
 
-    conditions = [soil, elevation, climate, latitude]
+    conditions = [soil, elevation, climate, latitude, travel]
 
     suitability = Suitability(variety, conditions)
 
