@@ -101,6 +101,7 @@ if __name__ == '__main__':
     from conditions.soil import ConditionSoil
     from conditions.bioclim import ConditionClimate
     from conditions.travel import ConditionTravel
+    from conditions.gaez import ConditionGaez
     if DO_ELEVATION_LIMITS:
         from conditions.elevation_limits import ConditionElevation
     else:
@@ -115,8 +116,9 @@ if __name__ == '__main__':
     climate = ConditionClimate()
     latitude = ConditionLatitude()
     travel = ConditionTravel()
+    gaez = ConditionGaez(variety)
 
-    conditions = [soil, elevation, climate, latitude, travel]
+    conditions = [soil, elevation, climate, latitude, travel, gaez]
 
     suitability = Suitability(variety, conditions)
 
@@ -124,4 +126,4 @@ if __name__ == '__main__':
     #print suitability.get_at(4.0, -76.0)
     #print suitability.get_at(-29.99, -51)
 
-    suitability.make_netcdf4(variety + '.nc4')
+    suitability.make_netcdf4('outputs/' + variety + '.nc4')

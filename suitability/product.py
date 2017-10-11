@@ -1,20 +1,23 @@
-## Incorporate the effect of GAEZ climate constraints
+## Zero-out the suitability of urban and protected areas
 
 import sys
 sys.path.append("../lib")
 
 import os
-from bingrid import AsciiSpatialGrid
-from zipfile import ZipFile
 import numpy as np
+import pandas as pd
+from scipy import interpolate
 from netCDF4 import Dataset
 
-def get_gaez_grid(zippath):
-    with ZipFile(zippath, 'r') as zipfp:
-        with zipfp.open("data.asc", 'r') as data:
-            grid = AsciiSpatialGrid(data, None)
+transform = True
 
-    return grid
+def get_table_grid(filepath):
+    df = pd.read_csv(filepath)
+    filled = np.zeros((720, 4320))
+    for ii, series in df.iterrows():
+        filled[int(series['row']) - 1, int(series['col']) - 1] = 1
+
+    return filled
 
 def get_bayes_array(nc4path, variable='suitability'):
     rootgrp = Dataset(nc4path, "r")
@@ -28,22 +31,34 @@ def get_bayes_array(nc4path, variable='suitability'):
 
     return latitude, longitude, array
 
-def product(latitude, longitude, bayes_array, gaez_grid, rr, cc):
-    if gaez_grid.getll_raw(latitude[rr], longitude[cc]) == 0:
-        return 0 # even if other is inf (would otherwise give 0 * inf = nan)
-    return gaez_grid.getll_raw(latitude[rr], longitude[cc]) * bayes_array[rr, cc] / (1 + bayes_array[rr, cc])
+def product(latitude, longitude, bayes_array, grid, rr, cc, transfunc):
+    if grid[rr, cc] > 0:
+        return 0 # not permitted
+    if not transform:
+        return bayes_array[rr, cc]
 
-def all_products(latitude, longitude, bayes_array, gaez_grid):
+    if np.ma.is_masked(bayes_array[rr, cc]):
+        return np.nan
+    
+    if bayes_array[rr, cc] == 0 or np.log(bayes_array[rr, cc]) < -85:
+        return 0
+
+    if np.log(bayes_array[rr, cc]) > 85:
+        return transfunc(85)
+
+    return transfunc(np.log(bayes_array[rr, cc]))
+
+def all_products(latitude, longitude, bayes_array, grid, transfunc):
     result = np.zeros((len(latitude), len(longitude)))
 
     for rr in range(len(latitude)):
         print rr
         for cc in range(len(longitude)):
-            result[rr, cc] = product(latitude, longitude, bayes_array, gaez_grid, rr, cc)
+            result[rr, cc] = product(latitude, longitude, bayes_array, grid, rr, cc, transfunc)
 
     return result
 
-def write_nc4(outpath, latitude, longitude, array, units="index (0-100)", confs=None):
+def write_nc4(outpath, latitude, longitude, array, units="index (0-1)", confs=None):
     rootgrp = Dataset(outpath, 'w', format="NETCDF4")
     lat = rootgrp.createDimension('lat', len(latitude))
     lon = rootgrp.createDimension('lon', len(longitude))
@@ -67,21 +82,22 @@ def write_nc4(outpath, latitude, longitude, array, units="index (0-100)", confs=
 
         cfs[:, :] = confs
 
-
 if __name__ == '__main__':
-    variety = 'robusta'
     outdir = "outputs"
 
-    grid_gaez = get_gaez_grid("../data/sources/gaez/constraints-" + variety + "-irrig-high-baseline.zip")
-    latitude, longitude, suitability = get_bayes_array(os.path.join(outdir, variety + ".nc4"))
+    grid_urban = get_table_grid("../data/urban.csv")
+    grid_protected = get_table_grid("../data/protected.csv")
 
-    #print suitability.shape
-    #print longitude[3126], latitude[554]
-    #print grid_gaez.nrows, grid_gaez.ncols
+    for variety in ['arabica', 'robusta']:
+        latitude, longitude, suitability = get_bayes_array(os.path.join(outdir, variety + ".nc4"))
 
-    #print grid_gaez.getll_raw(latitude[554], longitude[3126])
-    #print suitability[554, 3126]
+        transdata = pd.read_csv("outputs/" + variety + "-transform.csv")
+        transfunc = interpolate.interp1d(transdata.xxpred, transdata.yypred, bounds_error=True)
+        
+        suitability = all_products(latitude, longitude, suitability, grid_urban + grid_protected, transfunc)
+        suitability[np.isnan(suitability)] = 1
 
-    suitability = all_products(latitude, longitude, suitability, grid_gaez)
-
-    write_nc4(os.path.join(outdir, variety + "-product.nc4"), latitude, longitude, suitability)
+        if transform:
+            write_nc4(os.path.join(outdir, variety + "-product.nc4"), latitude, longitude, suitability)
+        else:
+            write_nc4(os.path.join(outdir, variety + "-product-untransformed.nc4"), latitude, longitude, suitability)

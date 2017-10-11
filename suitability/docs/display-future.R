@@ -1,4 +1,4 @@
-setwd("~/projects/coffee/tools/suitability")
+setwd("~/research/coffee/tools/suitability")
 
 library(ncdf4)
 library(maps)
@@ -7,7 +7,7 @@ library(raster)
 source("intake/lib.R") # now up in coffee/tools
 
 do.rescale <- F
-fileprefix <- "arabica-future"
+fileprefix <- "robusta-future"
 
 database <- nc_open(paste0("suitability/outputs/", fileprefix, ".nc4"))
 map <- ncvar_get(database, "suitability")
@@ -16,8 +16,6 @@ confs <- ncvar_get(database, "confidence")
 confs[confs > 1] <- 1 # too high!
 
 database <- nc_open("../database/harvestarea.nc4")
-arabica <- ncvar_get(database, "arabica")
-
 longitude <- ncvar_get(database, "lon")
 latitude <- ncvar_get(database, "lat")
 

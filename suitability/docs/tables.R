@@ -1,8 +1,8 @@
-setwd("~/projects/coffee/tools/suitability")
+setwd("~/research/coffee/tools/suitability")
 
 globaldata <- data.frame()
 
-variety <- "robusta" #"arabica" # #
+variety <- "arabica" #"robusta"
 
 table <- read.csv(paste0("outputs/", variety, "-countries.csv"))
 table$avgconf[table$avgconf > 100] <- 100
@@ -76,7 +76,7 @@ for (country in unique(faostat$AreaName)) {
         todo <- todo[todo != country]
 }
 
-table <- table[, c("country", "baseline", "increase", "decrease", "avgconf", "lossperc", "chngperc", "harvest", "harvlossperc", "incconf", "decconf", "harvconf")]
+table <- table[, c("country", "baseline", "increase", "decrease", "avgconf", "lossperc", "chngperc", "harvest", "harvlossperc", "incconf", "decconf", "harvconf", "unharvbase")]
 
 ## Make barchart
 
@@ -84,25 +84,25 @@ table <- table[, c("country", "baseline", "increase", "decrease", "avgconf", "lo
 table$harvest[is.na(table$harvest)] <- 0
 table$decconf[table$decconf < 0] <- 0
 
-globaldata <- rbind(globaldata, data.frame(variety=variety, baseline=sum(table$baseline), increase=sum(table$increase), decrease=sum(table$decrease), lossperc=sum(table$decrease) / sum(table$baseline), chngperc=(sum(table$increase) + sum(table$decrease)) / sum(table$baseline), harvest=sum(table$harvest), harvlossperc=sum(table$harvest * table$harvlossperc / 100) / sum(table$harvest), incconf=sum(table$increase * table$incconf, na.rm=T) / sum(table$increase, na.rm=T), decconf=sum(table$decrease * table$decconf, na.rm=T) / sum(table$decrease), harvconf=sum(table$harvest * table$harvlossperc * table$harvconf, na.rm=T) / sum(table$harvest * table$harvlossperc, na.rm=T)))
+globaldata <- rbind(globaldata, data.frame(variety=variety, baseline=sum(table$baseline), increase=sum(table$increase), decrease=sum(table$decrease), lossperc=sum(table$decrease) / sum(table$baseline), chngperc=(sum(table$increase) + sum(table$decrease)) / sum(table$baseline), harvest=sum(table$harvest), harvlossperc=sum(table$harvest * table$harvlossperc / 100) / sum(table$harvest), incconf=sum(table$increase * table$incconf, na.rm=T) / sum(table$increase, na.rm=T), decconf=sum(table$decrease * table$decconf, na.rm=T) / sum(table$decrease), harvconf=sum(table$harvest * table$harvlossperc * table$harvconf, na.rm=T) / sum(table$harvest * table$harvlossperc, na.rm=T), unharvbase=sum(table$unharvbase, na.rm=T)))
 
 table$country <- as.character(table$country)
 table$country[table$country == "C\xf4te d'Ivoire"] <- "Cote d'Ivoire"
 table$country[table$country == "S\xe3o Tom\xe9 and Principe"] <- "Sao Tome and Principe"
 
 if (variety == "arabica") {
-    table2 <- table[table$country != "World" & (table$baseline > 1e6 | table$increase > 1e6 | table$harvest > 1e5),]
+    table2 <- table[table$country != "World" & (table$baseline > 1e6 | table$increase > 1e6 | table$unharvbase + table$harvest > 1e5),]
 } else {
-    table2 <- table[table$country != "World" & (table$baseline > 4e6 | table$increase > 4e6 | table$harvest > 1e5),]
-}    
+    table2 <- table[table$country != "World" & (table$baseline > 4e6 | table$increase > 4e6 | table$unharvbase + table$harvest > 1e5),]
+}
 
 data <- data.frame(country=rep(table2$country, 3),
-                   positives=c(table2$harvest, pmax(0, table2$baseline - table2$harvest), table2$increase),
-                   negatives=c(table2$harvest * table2$harvlossperc / 100, rep(NA, nrow(table2)), table2$decrease - table2$harvest * table2$harvlossperc / 100),
+                   positives=c(table2$harvest, table2$unharvbase, table2$increase),
+                   negatives=c(table2$harvest * table2$harvlossperc / 100, rep(NA, nrow(table2)), pmax(-table2$unharvbase, pmin(0, table2$decrease - table2$harvest * table2$harvlossperc / 100))),
                    posconfs=c(rep(1, 2*nrow(table2)), table2$incconf / 100),
                    negconfs=c(table2$harvconf / 100, rep(NA, nrow(table2)), table2$decconf / 100),
                    group=c(rep("Current cultivation", nrow(table2)),
-                       rep("Baseline suitability", nrow(table2)),
+                       rep("Additional baseline suitability", nrow(table2)),
                        rep("Suitability change", nrow(table2))))
 data$country <- factor(data$country, levels=table2$country[rev(order(table2$harvest))])
 
@@ -117,18 +117,21 @@ S_sqrt_trans <- function() trans_new("S_sqrt",S_sqrt,IS_sqrt)
 
 library(R.utils)
 
-ggplot(data, aes(x=country, fill=group)) +
+data$group <- factor(data$group, levels=c("Suitability change", "Additional baseline suitability", "Current cultivation"))
+
+ggplot(data[order(data$group, decreasing=T),], aes(x=country, fill=group)) +
     geom_bar(aes(y=positives / 1e6, alpha=posconfs), stat="identity") +
         geom_bar(aes(y=negatives / 1e6, alpha=negconfs), stat="identity") +
-            geom_hline(aes(yintercept=0)) +
+            geom_hline(aes(yintercept=0)) + theme_bw() +
                 theme(axis.text.x=element_text(angle = 45, hjust = 1, size=10), legend.position="top", plot.margin = unit(c(0,1,0,2), "cm"), legend.box = "horizontal") +
-                    scale_y_continuous(trans="S_sqrt", expand=c(0, 0)) +
+                    scale_y_continuous(trans="S_sqrt") +
                         xlab("") + ylab("Suitability and changes in millions of hectares") +
-                            scale_fill_discrete(name="", breaks=c("Current cultivation", "Baseline suitability", "Suitability change")) +
+                            scale_fill_discrete(name="", breaks=c("Current cultivation", "Additional baseline suitability", "Suitability change")) +
                                 scale_alpha_continuous(name="Confidence", breaks=c(.1, .25, 1), labels=c("10%", "25%", "100%")) +
-                                    ggtitle(paste("Changes in", capitalize(variety), "Suitability to 2050"))
+    ggtitle(paste("Changes in", capitalize(variety), "Suitability to 2050")) +
+    theme(plot.title = element_text(hjust = 0.5))
 
-ggsave(paste0(variety, "-changes.pdf"), width=9, height=6)
+ggsave(paste0("outputs/", variety, "-changes.pdf"), width=9, height=6)
 
 ## Make table
 
@@ -149,16 +152,16 @@ ggsave(paste0(variety, "-changes.pdf"), width=9, height=6)
 ##     }
 ## }
 
-table <- table[,c("country", "baseline", "increase", "incconf", "decrease", "decconf", "lossperc", "chngperc", "harvest", "harvlossperc", "harvconf")]
+table <- table[,c("country", "baseline", "increase", "incconf", "decrease", "decconf", "lossperc", "chngperc", "harvest", "harvlossperc", "harvconf", "unharvbase")]
 
-names(table) <- c("Country", "Baseline (Ha)", "Increase (Ha)", "IConf. (%)", "Decrease (Ha)", "DConf. (%)", "Loss (%)", "Chng. (%)", "Harvest (Ha)", "H. Loss (%)", "HConf. (%)")
+names(table) <- c("Country", "Baseline (Ha)", "Increase (Ha)", "IConf. (%)", "Decrease (Ha)", "DConf. (%)", "Loss (%)", "Chng. (%)", "Harvest (Ha)", "H. Loss (%)", "HConf. (%)", "Unharvested (Ha)")
 
 library(xtable)
 
 Sys.setlocale('LC_ALL','C')
 
 xtbl <- xtable(table)
-print(xtbl, include.rownames=FALSE)
+print(xtbl, include.rownames=FALSE, file=paste0("outputs/", variety, "-table.tex"))
 
 ## Print out global data
 
@@ -168,7 +171,7 @@ globaldata[, 8] <- globaldata[, 8] * 100
 
 globaldata <- globaldata[,c("variety", "baseline", "increase", "incconf", "decrease", "decconf", "lossperc", "chngperc", "harvest", "harvlossperc", "harvconf")]
 
-names(table) <- c("Variety", "Baseline (Ha)", "Increase (Ha)", "IConf. (%)", "Decrease (Ha)", "DConf. (%)", "Loss (%)", "Chng. (%)", "Harvest (Ha)", "H. Loss (%)", "HConf. (%)")
+names(globaldata) <- c("Variety", "Baseline (Ha)", "Increase (Ha)", "IConf. (%)", "Decrease (Ha)", "DConf. (%)", "Loss (%)", "Chng. (%)", "Harvest (Ha)", "H. Loss (%)", "HConf. (%)")
 
 xtbl <- xtable(globaldata, digits=c(0, 0, 0, 0, 2, 0, 2, 1, 1, 0, 1, 2))
-print(xtbl, include.rownames=FALSE)
+print(xtbl, include.rownames=FALSE, file=paste0("outputs/sumtbl.tex"))

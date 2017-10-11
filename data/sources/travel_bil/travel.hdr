@@ -1,17 +1,17 @@
-NROWS           4320 
-NCOLS           720 
+NROWS           720 
+NCOLS           4320 
 NBANDS          1 
 NBITS           64 
 BYTEORDER       I 
 PIXELTYPE       FLOAT 
 LAYOUT          BIL 
 SKIPBYTES       0
-ULXMAP          0.000694444444444444 
-ULYMAP          0.999884259259259 
-XDIM            0.001388889 
-YDIM            0.0002314815 
-BANDROWBYTES    5760 
-TOTALROWBYTES   5760 
+ULXMAP          -179.958333333334 
+ULYMAP          29.9583333328535 
+XDIM            0.08333333 
+YDIM            0.08333333 
+BANDROWBYTES    34560 
+TOTALROWBYTES   34560 
 BANDGAPBYTES    0
 NODATA          -1.7e+308 
 
@@ -19,7 +19,7 @@ NODATA          -1.7e+308
 The below is additional metadata, not part of the BIL/HDR format
 ----------------------------------------------------------------
 CREATOR=R package:x
-CREATED= 2017-07-28 14:15:55 
-Projection= NA 
+CREATED= 2017-07-31 15:23:20 
+Projection= +proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0 
 MinValue= 0 
 MaxValue= 9624.94 

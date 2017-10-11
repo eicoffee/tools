@@ -1,11 +1,19 @@
 import os
 import numpy as np
+import pandas as pd
+from scipy import interpolate
 import product
 
 climdir = "../extdata/rcp8.5-2050"
 gaezdir = "../extdata/gaez-a2-2050"
 variety = "robusta"
 outdir = "outputs"
+
+grid_urban = product.get_table_grid("../data/urban.csv")
+grid_protected = product.get_table_grid("../data/protected.csv")
+
+transdata = pd.read_csv("outputs/" + variety + "-transform.csv")
+transfunc = interpolate.interp1d(transdata.xxpred, transdata.yypred, bounds_error=True)
 
 # Load all bayesian results
 print "Loading Bayesian maps..."
@@ -15,23 +23,20 @@ for dirname in os.listdir(climdir):
     if os.path.isfile(os.path.join(climdir, dirname)):
         continue
 
-    try:
-        latitude, longitude, array = product.get_bayes_array(os.path.join(outdir, variety + "-" + dirname + '.nc4'))
-        bayes_arrays[dirname] = array
-        print dirname
-    except:
-        pass
+    for zipname in os.listdir(gaezdir):
+        if variety not in zipname:
+            continue
 
-# Load all GAEZ results
-print "Loading GAEZ maps..."
-gaez_grids = {}
-for zipname in os.listdir(gaezdir):
-    if variety not in zipname:
-        continue
+        gaezkey = zipname[-12:-4]
 
-    key = zipname[-12:-4]
-    gaez_grids[key] = product.get_gaez_grid(os.path.join(gaezdir, zipname))
-    print key
+        print dirname, gaezkey
+
+        latitude, longitude, array = product.get_bayes_array(os.path.join(outdir, variety + "-" + dirname + '-' + gaezkey + '.nc4'))
+
+        suitability = product.all_products(latitude, longitude, array, grid_urban + grid_protected, transfunc)
+        suitability[np.isnan(suitability)] = 1
+
+        bayes_arrays[dirname + '-' + gaezkey] = suitability
 
 # Loading the baseline
 print "Loading the baseline..."
@@ -45,12 +50,11 @@ for rr in range(len(latitude)):
     print rr
     for cc in range(len(longitude)):
         values = []
-        for bayeskey in bayes_arrays:
-            array = bayes_arrays[bayeskey]
-            for gaezkey in gaez_grids:
-                grid = gaez_grids[gaezkey]
-                values.append(product.product(latitude, longitude, array, grid, rr, cc))
+        for bayesgaezkey in bayes_arrays:
+            array = bayes_arrays[bayesgaezkey]
 
+            values.append(array[rr, cc])
+                
         values = np.array(values) - baseline_array[rr, cc]
         if np.all(map(np.isnan, values)):
             #print "All NaN"
@@ -60,9 +64,9 @@ for rr in range(len(latitude)):
             median = np.median(values)
             medians[rr, cc] = median
             if median > 0:
-                confs[rr, cc] = (2 * sum((values < median) & (values > 0)) + sum(values == median)) / float(len(values))
+                confs[rr, cc] = min(1, (2 * sum((values < median) & (values > 0)) + sum(values == median)) / float(len(values)))
             elif median < 0:
-                confs[rr, cc] = (2 * sum((values > median) & (values < 0)) + sum(values == median)) / float(len(values))
+                confs[rr, cc] = min(1, (2 * sum((values > median) & (values < 0)) + sum(values == median)) / float(len(values)))
             elif median == 0:
                 confs[rr, cc] = sum(values == median) / float(len(values))
 
@@ -70,6 +74,6 @@ for rr in range(len(latitude)):
                 print median, confs[rr, cc]
 
 print "Writing result..."
-product.write_nc4(os.path.join(outdir, variety + "-future.nc4"), latitude, longitude, medians, units="index change (-100 - 100)", confs=confs)
+product.write_nc4(os.path.join(outdir, variety + "-future.nc4"), latitude, longitude, medians, units="index change (-1 - 1)", confs=confs)
 
         

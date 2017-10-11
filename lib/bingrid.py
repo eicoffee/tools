@@ -75,7 +75,11 @@ class BinaryGrid(SpatialGrid):
         row = int(math.floor((self.y0_corner - latitude) / self.sizey))
         col = int(math.floor((longitude - self.x0_corner) / self.sizex))
 
-        self.fp.seek((row*self.ncols + col)*self.bytes)
+        try:
+            self.fp.seek((row*self.ncols + col)*self.bytes)
+        except:
+            print latitude, longitude, row, col, self.ncols, self.nrows
+            
         value = self.fp.read(self.bytes)
 
         # unpack binary data into a flat tuple z
@@ -134,17 +138,17 @@ class BilBinaryGrid(BinaryGrid):
 
             assert layout == 'BIL', "Only the BIL format is supported."
             assert nbands == 1, "Only single band files are supported."
-            assert nbits == 32 or nbits == 16, "Only 16- or 32-bit value files are supported."
+            assert nbits in [16, 32, 64], "Only 16-, 32-, or 64-bit value files are supported."
 
             if byteorder == 'M':
-                fmt = '>' + ('i' if nbits == 32 else 'h')
+                fmt = '>' + ('i' if nbits == 32 else ('d' if nbits == 64 else 'h'))
             else:
-                fmt = '<' + ('i' if nbits == 32 else 'h')
+                fmt = '<' + ('i' if nbits == 32 else ('d' if nbits == 64 else 'h'))
 
         if flipy:
             sizey = -sizey
 
-        super(BilBinaryGrid, self).__init__(bilfp, upperleft_x, upperleft_y, sizex, sizey, ncols, nrows, nbits / 8, fmt)
+        super(BilBinaryGrid, self).__init__(bilfp, upperleft_x - sizex / 2, upperleft_y + sizey / 2, sizex, sizey, ncols, nrows, nbits / 8, fmt)
 
 class DelimitedSpatialGrid(SpatialGrid):
     def __init__(self, fp, x0_corner, y0_corner, sizex, sizey, ncols, nrows, delimiter):

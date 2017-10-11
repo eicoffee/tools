@@ -1,4 +1,4 @@
-setwd("~/projects/coffee/tools")
+setwd("~/research/coffee/tools")
 
 library(raster)
 library(maps)
@@ -41,6 +41,27 @@ proj.abbr <- attr(shape, "projection")
 png("suitability/docs/urbanmap.png", width=1000, height=400)
 map("worldHires", xlim=c(-180, 180), ylim=c(-59, 86), mar=rep(0, 4))
 addPolys(shape, col="#800080", border="#800080")
+dev.off()
+
+## Travel time
+
+source("suitability/intake/lib.R")
+
+x <- new("GDALReadOnlyDataset", "~/research/coffee/tools/data/sources/acc_50k/w001001.adf")
+xx <- asSGDF_GROD(x)
+r <- raster(xx)
+
+redr <- aggregate(r, fact=10)
+redr2 <- t(redr[2160:1,,1])
+dim(redr2) <- c(4320, 2160)
+
+maplats <- 89.9583333333333333 - 0.08333333333333333 * (1:2160 - 1)
+maplons <- (-180 + 0.08333333333333333 / 2) + 0.08333333333333333 * (1:4320 - 1)
+
+png("suitability/docs/travelmap.png", width=1000, height=400)
+map("worldHires", xlim=c(-180, 180), ylim=c(-59, 86), mar=rep(0, 4))
+image(maplons, rev(maplats), log(redr2), col=topo.colors(20), add=T)
+map("worldHires", col="#00000080", add=T)
 dev.off()
 
 ## DIDN'T USE BELOW

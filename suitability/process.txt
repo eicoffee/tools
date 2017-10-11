@@ -3,9 +3,15 @@ Upon adding a new data source:
  - Create a script like the ones in intake/ to calculate the PDF and correlations (and run it
  to get the corresponding files)
  - Create a class like the ones in conditions
+ - Add it to suitability and to future
 
-1. suitability
-
-product
-future
-bycountry
+1. Run suitability (once for each variety)
+2. Run compare.R to get loess relationships
+3. Run product
+4. Run future (once for each variety)
+5. Run uncertainty (once for each variety)
+6. Run bycountry (once for each variety)
+7. Run docs/display.R
+8. Run docs/display-future.R (once for each variety)
+9. Run docs/tables.R (once for each variety, keeping globaldata
+between runs)

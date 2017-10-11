@@ -47,10 +47,20 @@ get.travel.map <- function() {
     r <- raster(xx)
 
     redr <- aggregate(r, fact=10)
+    crop.travel <<- crop(redr, extent(-180, 180, -30, 30))
 
     lats <- 89.9583333333333333 - 0.08333333333333333 * (1:2160 - 1)
     redr2 <- redr[rev(which(lats <= 30 & lats >= -30)),,1]
     dim(redr2) <- c(4320, 720)
 
     redr2
+}
+
+get.gaez.map <- function(variety) {
+    library(raster)
+    data = raster(paste0("~/research/coffee/tools/data/sources/gaez/constraints-", variety, "-irrig-high-baseline/data.asc"))
+    cropped <- crop(data, extent(-180, 180, -30, 30))
+    cropped[cropped < 0] <- NA
+
+    rbind(t(as.matrix(cropped)), matrix(NA, 1, 720))
 }

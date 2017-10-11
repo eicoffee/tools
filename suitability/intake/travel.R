@@ -17,7 +17,7 @@ latitude <- ncvar_get(database, "lat")
 ## Get the variable from the source and write it back out
 travel <- get.travel.map()
 
-writeRaster(travel, "data/sources/travel.bil", "BIL")
+writeRaster(crop.travel, "data/sources/travel.bil", "BIL") # crop.travel put into global env by get.travel.map
 
 ## Extract univariates
 quantile(travel, probs=c(.05, .95), na.rm=T)
@@ -85,3 +85,12 @@ for (bio in 1:19) {
 }
 
 write.csv(data.corrs, file="data/travclimcorr.csv", row.names=F)
+
+latmap <- latitude
+for (ii in 1:4319) {
+    latmap <- rbind(latmap, latitude)
+}
+
+data.corrs <- data.frame(corr=calc.corr(travel, latmap))
+
+write.csv(data.corrs, file="data/travlatcorr.csv", row.names=F)
