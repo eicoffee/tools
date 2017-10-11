@@ -10,8 +10,10 @@ Upon adding a new data source:
 3. Run product
 4. Run future (once for each variety)
 5. Run uncertainty (once for each variety)
-6. Run bycountry (once for each variety)
 7. Run docs/display.R
 8. Run docs/display-future.R (once for each variety)
+6. Run bycountry (once for each variety)
 9. Run docs/tables.R (once for each variety, keeping globaldata
 between runs)
+10. Run variance.py (once for each variety)
+11. Run docs/variance.R (once for each variety)

@@ -1,0 +1,3 @@
+200810102018   3   155     0nelsoan C_50000 = INT ( temp * G:\nelsoan\wdr2009\data\general\gadm_m )
+200810102019   1    27     0nelsoan BUILDVAT c_50000
+20081015 957   2    24     0nelsoan  copy W:\wdr2009\data\model\c_50000 E:\Export\access_50k\acc_50k
