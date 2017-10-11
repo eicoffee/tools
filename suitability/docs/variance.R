@@ -10,7 +10,7 @@ df$title <- c("Total", "Elevation", "Top Soil Sand", "Top Soil Silt", "Top Soil 
 
 library(ggplot2)
 
-df$title <- factor(df$title, levels=df$title)
+df$title <- factor(df$title, levels=c("Mean Temp.", "Diurnal Range", "Isothermality", "Temp. Seasonality", "Max Temp.", "Min Temp.", "Wettest Temp.", "Driest Temp.", "Warmest Temp.", "Coldest Temp.", "Precipitation", "Max Precip.", "Min Precip.", "Precip. Seasonality", "Wettest Precip.", "Driest Precip.", "Warmest Precip.", "Coldest Precip.", "Top Soil Sand", "Top Soil Silt", "Top Soil Clay", "Top Soil Carbon", "Top Soil CaCO3", "Top Soil Gypsum", "Bottom Soil Sand", "Bottom Soil Silt", "Bottom Soil Clay", "Bottom Soil Carbon", "Bottom Soil CaCO3", "Bottom Soil Gypsum", "Elevation", "Latitude", "Transport Time", "Constraints"))
 
 ggplot(df[-1,], aes(title, variance)) +
     geom_bar(stat="identity") +
