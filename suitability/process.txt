@@ -15,3 +15,5 @@ Upon adding a new data source:
 8. Run docs/display-future.R (once for each variety)
 9. Run docs/tables.R (once for each variety, keeping globaldata
 between runs)
+10. Run variance.py (once for each variety)
+11. Run docs/variance.R (once for each variety)
