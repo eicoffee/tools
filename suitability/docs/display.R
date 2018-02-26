@@ -55,7 +55,7 @@ png(paste0("suitability/outputs/", fileprefix[ii], ".png"), width=4320, height=7
 ##map("worldHires", ylim=c(-30, 30), xlim=c(-180, 180), mar=rep(0,4))
 par(mar=rep(0, 4))
 plot(0, 0, ylim=c(-30, 30), xlim=c(-180, 180), xaxs = "i", yaxs = "i")
-image(longitude, latitude, map2, col=brewer.pal(11,"RdYlGn"), add=T)
+image(longitude, latitude, map2, col=c("#f6e6e9", brewer.pal(11,"RdYlGn")), add=T)
 image(longitude, latitude, none, col="#FDFDFD", add=T) # Need off-white for image stretching
 image(longitude, latitude, mask, col=c("#FF00FF", "#00FFFF", "#0000FF"), add=T) # "#00000080",
 map("worldHires", ylim=c(-30, 30), xlim=c(-180, 180), col="#000000A0", add=T)

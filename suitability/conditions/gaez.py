@@ -35,7 +35,7 @@ class ConditionGaez(Condition):
         gaezdist = pandas.read_csv("../data/gaezdist.csv")
 
         weighted = gaezdist.weighted[gaezdist.variety == variety]
-        weighted[gaezdist.center[gaezdist.variety == variety] <= 1] = 0 # Force to be 0
+        #weighted[gaezdist.center[gaezdist.variety == variety] <= 1] = 0 # Force to be 0
         
         weighted_dist = SampledPDF(gaezdist.center[gaezdist.variety == variety], weighted, lambda x: (x - 1, x + 1))
         unweighted_dist = SampledPDF(gaezdist.center[gaezdist.variety == variety], gaezdist.unweighted[gaezdist.variety == variety], lambda x: (x - 1, x + 1))

@@ -30,16 +30,16 @@ robusta.predicted <- ncvar_get(predicted, "suitability")
 quantile(arabica / areas, na.rm=T)
 quantile(robusta / areas, na.rm=T)
 
-
 ## Generate loess relationship
-obs <- arabica / areas
+## Swap all instances of 'arabica' and 'robusta' for two times
+obs <- robusta / areas
 obs[is.na(obs)] <- 0
-valid <- !is.na(arabica.predicted) & is.finite(arabica.predicted) & arabica.predicted > 0 & obs > 0
+valid <- !is.na(robusta.predicted) & is.finite(robusta.predicted) & robusta.predicted > 0 & obs > 0
 
 if (sum(valid) > 60000)
-    valid <- valid & rep(c(F, T, F), 1036800)
+    valid <- valid & rep(c(F, T, F), length(valid) / 3)
 
-df <- data.frame(yy=as.vector(obs[valid]), xx=as.vector(log(arabica.predicted[valid])))
+df <- data.frame(yy=as.vector(obs[valid]), xx=as.vector(log(robusta.predicted[valid])))
 mod <- loess(yy ~ xx, data=df, span=1/3)
 summary(mod)
 
@@ -58,7 +58,12 @@ ggplot(df, aes(xx, yy)) +
     scale_x_continuous(expand=c(0, 0))
 ggsave("suitability/outputs/robusta-transform.pdf", width=6, height=4)
 
-write.csv(data.frame(xxpred, yypred), "suitability/outputs/robusta-transform.csv", row.names=F)
+## Cut off turn-around (for extrapolation)
+minii <- which.min(yypred[xxpred < 0]) + 1
+
+write.csv(data.frame(xxpred=xxpred[minii:length(xxpred)], yypred=yypred[minii:length(yypred)]), "suitability/outputs/robusta-transform.csv", row.names=F)
+
+## No need to go beyond here
 
 ## NA-out only the water areas
 elev <- get.elev.map()

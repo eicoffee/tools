@@ -40,7 +40,7 @@ def product(latitude, longitude, bayes_array, grid, rr, cc, transfunc):
     if np.ma.is_masked(bayes_array[rr, cc]):
         return np.nan
     
-    if bayes_array[rr, cc] == 0 or np.log(bayes_array[rr, cc]) < -85:
+    if bayes_array[rr, cc] == 0: # or np.log(bayes_array[rr, cc]) < -85
         return 0
 
     if np.log(bayes_array[rr, cc]) > 85:
@@ -92,10 +92,10 @@ if __name__ == '__main__':
         latitude, longitude, suitability = get_bayes_array(os.path.join(outdir, variety + ".nc4"))
 
         transdata = pd.read_csv("outputs/" + variety + "-transform.csv")
-        transfunc = interpolate.interp1d(transdata.xxpred, transdata.yypred, bounds_error=True)
-        
+        transfunc = interpolate.interp1d(transdata.xxpred, transdata.yypred, fill_value="extrapolate") # bounds_error=True
+
         suitability = all_products(latitude, longitude, suitability, grid_urban + grid_protected, transfunc)
-        suitability[np.isnan(suitability)] = 1
+        suitability[np.isnan(suitability)] = np.max(suitability[np.logical_not(np.isnan(suitability))])
 
         if transform:
             write_nc4(os.path.join(outdir, variety + "-product.nc4"), latitude, longitude, suitability)

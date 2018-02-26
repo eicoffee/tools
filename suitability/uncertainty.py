@@ -6,14 +6,14 @@ import product
 
 climdir = "../extdata/rcp8.5-2050"
 gaezdir = "../extdata/gaez-a2-2050"
-variety = "robusta"
+variety = "robusta" #"arabica"
 outdir = "outputs"
 
 grid_urban = product.get_table_grid("../data/urban.csv")
 grid_protected = product.get_table_grid("../data/protected.csv")
 
 transdata = pd.read_csv("outputs/" + variety + "-transform.csv")
-transfunc = interpolate.interp1d(transdata.xxpred, transdata.yypred, bounds_error=True)
+transfunc = interpolate.interp1d(transdata.xxpred, transdata.yypred, fill_value="extrapolate") # bounds_error=True
 
 # Load all bayesian results
 print "Loading Bayesian maps..."

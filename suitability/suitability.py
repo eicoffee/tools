@@ -5,6 +5,11 @@ import numpy as np
 from netCDF4 import Dataset
 from copula import SampledPDF, GaussianCopula
 
+# rootgrp = Dataset("../../database/harvestarea.nc4", "r")
+# harvlat = rootgrp.variables['lat'][:]
+# harvlon = rootgrp.variables['lon'][:]
+# harvest = rootgrp.variables['arabica'][:, :]
+
 class Suitability(object):
     def __init__(self, variety, conditions):
         self.variety = variety
@@ -36,7 +41,7 @@ class Suitability(object):
         self.unweighted_copula = GaussianCopula(unweighted_dists, corrs, 0)
         self.order = preexisting
 
-    def get_at(self, latitude, longitude):
+    def get_at(self, latitude, longitude, coords):
         if latitude < -30 or latitude > 30:
             return 0
 
@@ -50,6 +55,9 @@ class Suitability(object):
         for condition in self.conditions:
             factor *= condition.independent_factor_at(self.variety, latitude, longitude, **kwargs)
 
+        # if harvest[coords] > 0 and factor == 0:
+        #     print "Zero at", args, kwargs
+            
         return factor
 
     def suitability_given(self, *args):
@@ -88,7 +96,7 @@ class Suitability(object):
         for rr in range(latcount):
             print rr
             for cc in range(loncount):
-                suits[rr, cc] = self.get_at(lats[rr], lons[cc])
+                suits[rr, cc] = self.get_at(lats[rr], lons[cc], (rr, cc))
 
         rootgrp.close()
 
@@ -96,8 +104,8 @@ if __name__ == '__main__':
 
     DO_ELEVATION_LIMITS = False
     DO_LATITUDE_EXOGENOUS = False
-    variety = 'robusta'
-
+    variety = 'robusta' #'arabica'
+    
     from conditions.soil import ConditionSoil
     from conditions.bioclim import ConditionClimate
     from conditions.travel import ConditionTravel

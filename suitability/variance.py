@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     DO_ELEVATION_LIMITS = False
     DO_LATITUDE_EXOGENOUS = False
-    variety = 'arabica' #'robusta'
+    variety = 'robusta' #'arabica'
 
     from conditions.soil import ConditionSoil
     from conditions.bioclim import ConditionClimate

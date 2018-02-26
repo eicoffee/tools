@@ -48,8 +48,12 @@ def get_values(rr, cc):
     posconf = 100 * abs(values[1]) * values[2] if values[1] > 0 else 0 # is x100 relative for percent
     negconf = 100 * abs(values[1]) * values[2] if values[1] < 0 else 0
 
-    knownharv = min(values[0], values[3] / 8557.25) # double converted to Ha, so remove one
-    unknownharv = values[3] / 8557.25 - knownharv
+    if values[0] == 0:
+        unknownharv = values[3] / 8557.25 # double converted to Ha, so remove one
+        knownharv = 0
+    else:
+        knownharv = values[3] / 8557.25 # double converted to Ha, so remove one
+        unknownharv = 0
 
     harvloss = knownharv * values[1] / values[0] if values[1] < 0 and values[0] > 0 else 0 # knownharv that's lost
     harvconf = abs(values[2]) * knownharv if values[1] < 0 else 0

@@ -7,7 +7,7 @@ library(raster)
 source("intake/lib.R") # now up in coffee/tools
 
 do.rescale <- F
-fileprefix <- "robusta-future"
+fileprefix <- "robusta-future" #"arabica-future"
 
 database <- nc_open(paste0("suitability/outputs/", fileprefix, ".nc4"))
 map <- ncvar_get(database, "suitability")

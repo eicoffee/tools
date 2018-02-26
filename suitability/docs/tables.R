@@ -2,6 +2,7 @@ setwd("~/research/coffee/tools/suitability")
 
 globaldata <- data.frame()
 
+## Run below twice
 variety <- "robusta" #"arabica"
 
 table <- read.csv(paste0("outputs/", variety, "-countries.csv"))
@@ -173,7 +174,6 @@ print(xtbl, include.rownames=FALSE, file=paste0("outputs/", variety, "-table.tex
 ## Print out global data
 
 globaldata[, 5] <- globaldata[, 5] * 100
-globaldata[, 6] <- globaldata[, 6] * 100
 globaldata[, 8] <- globaldata[, 8] * 100
 
 globaldata <- globaldata[,c("variety", "baseline", "increase", "incconf", "decrease", "decconf", "lossperc", "chngperc", "harvest", "harvlossperc", "harvconf")]

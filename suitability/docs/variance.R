@@ -2,7 +2,7 @@ setwd("~/research/coffee/tools/suitability")
 
 library(R.utils)
 
-variety <- "arabica" #"robusta"
+variety <- "robusta" #"arabica"
 
 df = read.csv(paste0("outputs/", variety, "-variance.csv"))
 
