@@ -2,6 +2,7 @@ setwd("~/projects/coffee/tools")
 
 library(ncdf4)
 library(PBSmapping)
+library(zoo)
 
 ## Get grid centers from harvest area
 database <- nc_open("../database/harvestarea.nc4")
@@ -9,7 +10,7 @@ longitude <- ncvar_get(database, "lon")
 latitude <- ncvar_get(database, "lat")
 
 ## Extract urban locations
-shape <- importShapefile("data/ne_10m_urban_areas/ne_10m_urban_areas.shp")
+shape <- importShapefile("data/sources/ne_10m_urban_areas/ne_10m_urban_areas.shp")
 proj.abbr <- attr(shape, "projection")
 
 events <- expand.grid(X=longitude, Y=latitude)
@@ -29,7 +30,7 @@ events$row = round(12 * (events$Y - latitude[1]) + 1)
 write.csv(events[urban, c('X', 'Y', 'row', 'col')], "data/urban.csv", row.names=F)
 
 ## Extract protected locations
-shape <- importShapefile("data/WDPA_July2015-shapefile/WDPA_July2015-shapefile-polygons-tropics.shp") # produced polygons-tropics-simple, but can't load
+shape <- importShapefile("../extdata/WDPA_July2015-shapefile/WDPA_July2015-shapefile-polygons-tropics.shp") # produced polygons-tropics-simple, but can't load
 proj.abbr <- attr(shape, "projection")
 polydata <- attr(shape, "PolyData")
 
@@ -47,9 +48,9 @@ managed <- c()
 for (i0 in seq(1, nrow(events), by=10000)) {
     print(i0)
     some <- findPolys(events[i0:min(i0 + 9999, nrow(events)),], shape)
-    pids <- some$PID[!ignore[some$PID]]
-    protected <- c(protected, some$EID[strict[pids]])
-    managed <- c(managed, some$EID[!strict[pids]])
+    some <- some[!ignore[some$PID],]
+    protected <- c(protected, some$EID[strict[some$PID]])
+    managed <- c(managed, some$EID[!strict[some$PID]])
 }
 
 events$col = round(12 * (events$X - longitude[1]) + 1)

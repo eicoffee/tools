@@ -32,14 +32,17 @@ quantile(robusta / areas, na.rm=T)
 
 ## Generate loess relationship
 ## Swap all instances of 'arabica' and 'robusta' for two times
-obs <- robusta / areas
+obs <- arabica / areas
 obs[is.na(obs)] <- 0
-valid <- !is.na(robusta.predicted) & is.finite(robusta.predicted) & robusta.predicted > 0 & obs > 0
+valid <- !is.na(arabica.predicted) & is.finite(arabica.predicted) & arabica.predicted > 0 & obs > 0
 
-if (sum(valid) > 60000)
+if (sum(valid) > 150000) {
+    valid <- valid & rep(c(F, T, F, F), length(valid) / 4)
+} else if (sum(valid) > 100000) {
     valid <- valid & rep(c(F, T, F), length(valid) / 3)
+}
 
-df <- data.frame(yy=as.vector(obs[valid]), xx=as.vector(log(robusta.predicted[valid])))
+df <- data.frame(yy=as.vector(obs[valid]), xx=as.vector(log(arabica.predicted[valid])))
 mod <- loess(yy ~ xx, data=df, span=1/3)
 summary(mod)
 
@@ -54,14 +57,14 @@ library(ggplot2)
 
 ggplot(df, aes(xx, yy)) +
     geom_smooth(method="loess", span=1/3) +
-    theme_bw() + xlab("Log relative probability") + ylab("Area under robusta cultivation (loess)") +
+    theme_bw() + xlab("Log relative probability") + ylab("Area under arabica cultivation (loess)") +
     scale_x_continuous(expand=c(0, 0))
-ggsave("suitability/outputs/robusta-transform.pdf", width=6, height=4)
+ggsave("suitability/outputs/arabica-transform.pdf", width=6, height=4)
 
 ## Cut off turn-around (for extrapolation)
 minii <- which.min(yypred[xxpred < 0]) + 1
 
-write.csv(data.frame(xxpred=xxpred[minii:length(xxpred)], yypred=yypred[minii:length(yypred)]), "suitability/outputs/robusta-transform.csv", row.names=F)
+write.csv(data.frame(xxpred=xxpred[minii:length(xxpred)], yypred=yypred[minii:length(yypred)]), "suitability/outputs/arabica-transform.csv", row.names=F)
 
 ## No need to go beyond here
 

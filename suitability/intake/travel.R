@@ -4,6 +4,7 @@ library(ncdf4)
 library(ggplot2)
 source("suitability/intake/lib.R")
 
+pdf.method <- 'kernel'
 do.displays <- F
 
 ## Get harvest area
@@ -20,29 +21,34 @@ travel <- get.travel.map()
 writeRaster(crop.travel, "data/sources/travel.bil", "BIL") # crop.travel put into global env by get.travel.map
 
 ## Extract univariates
-quantile(travel, probs=c(.05, .95), na.rm=T)
-uppers <- c(seq(24, by=24, length.out=99), Inf)
-center <- seq(12, by=24, length.out=100)
+if (pdf.method == 'bins') {
+    quantile(travel, probs=c(.05, .95), na.rm=T)
+    uppers <- c(seq(24, by=24, length.out=99), Inf)
+    center <- seq(12, by=24, length.out=100)
 
-unweighted <- c()
-arabicaed <- c()
-robustaed <- c()
+    unweighted <- c()
+    arabicaed <- c()
+    robustaed <- c()
 
-for (upper in uppers) {
-    unweighted <- c(unweighted, sum(travel < upper, na.rm=T))
-    arabicaed <- c(arabicaed, sum(arabica[travel < upper], na.rm=T))
-    robustaed <- c(robustaed, sum(robusta[travel < upper], na.rm=T))
+    for (upper in uppers) {
+        unweighted <- c(unweighted, sum(travel < upper, na.rm=T))
+        arabicaed <- c(arabicaed, sum(arabica[travel < upper], na.rm=T))
+        robustaed <- c(robustaed, sum(robusta[travel < upper], na.rm=T))
+    }
+
+    unweighted.fractions <- unweighted / unweighted[length(unweighted)]
+    arabicaed.fractions <- arabicaed / arabicaed[length(arabicaed)]
+    robustaed.fractions <- robustaed / robustaed[length(robustaed)]
+
+    unweighted <- diff(c(0, unweighted.fractions))
+    arabicaed <- diff(c(0, arabicaed.fractions))
+    robustaed <- diff(c(0, robustaed.fractions))
+
+    data <- data.frame(center, unweighted, arabicaed, robustaed)
+} else {
+    limits <- quantile(travel, probs=c(.05, .95), na.rm=T)
+    data <- kernel.method(travel, arabica, robusta)
 }
-
-unweighted.fractions <- unweighted / unweighted[length(unweighted)]
-arabicaed.fractions <- arabicaed / arabicaed[length(arabicaed)]
-robustaed.fractions <- robustaed / robustaed[length(robustaed)]
-
-unweighted <- diff(c(0, unweighted.fractions))
-arabicaed <- diff(c(0, arabicaed.fractions))
-robustaed <- diff(c(0, robustaed.fractions))
-
-data <- data.frame(center, unweighted, arabicaed, robustaed)
 
 write.csv(data, file="data/travdist.csv", row.names=F)
 

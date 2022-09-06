@@ -49,7 +49,7 @@ class ConditionClimate(Condition):
         unweighted_dists = []
         for bio in self.bios:
             select = climdist.bioclim == bio
-            span = np.mean(np.diff(climdist.center[select]))
+            span = 2*np.mean(np.diff(climdist.center[select]))
 
             weighted_dist = SampledPDF(climdist.center[select], climdist[variety + 'ed'][select], lambda x, span=span: (x - span, x + span))
             unweighted_dist = SampledPDF(climdist.center[select], climdist.unweighted[select], lambda x, span=span: (x - span, x + span))
@@ -65,7 +65,10 @@ class ConditionClimate(Condition):
 
         def get_corr(one, two):
             if two in self.order:
-                return climcorr[(climcorr.bioclim1 == int(one[3:])) & (climcorr.bioclim2 == int(two[3:]))]['corr']
+                if int(one[3:]) < int(two[3:]):
+                    return climcorr[(climcorr.bioclim1 == int(one[3:])) & (climcorr.bioclim2 == int(two[3:]))]['corr']
+                else:
+                    return climcorr[(climcorr.bioclim1 == int(two[3:])) & (climcorr.bioclim2 == int(one[3:]))]['corr']
 
             if two == 'elev':
                 return elevcorr[elevcorr.bioclim == int(one[3:])]['corr']

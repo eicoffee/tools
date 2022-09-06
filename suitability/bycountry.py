@@ -7,7 +7,7 @@ import geoshapes, product
 
 #ha_per_cell = 8605.7 # (111.32 / 12)^2 km^2
 
-variety = "robusta" #"arabica"
+variety = "arabica" #"robusta"
 outdir = "outputs"
 rasters = [(os.path.join(outdir, variety + "-product.nc4"), 'suitability'),
            (os.path.join(outdir, variety + "-future.nc4"), 'suitability'),
@@ -24,9 +24,9 @@ for raster_path, variable in rasters:
         longitude = mylon
 
     if 'product' in raster_path or variable == 'confidence':
-        assert np.all(raster_array <= 1) and np.all(raster_array >= 0), "%s:%s range is [%f, %f]" % (raster_path, variable, np.min(raster_array), np.max(raster_array))
+        assert np.all(raster_array[np.logical_not(np.isnan(raster_array))] <= 1) and np.all(raster_array[np.logical_not(np.isnan(raster_array))] >= 0), "%s:%s range is [%f, %f]" % (raster_path, variable, np.min(raster_array), np.max(raster_array))
     elif variable == 'suitability':
-        assert np.all(raster_array <= 1) and np.all(raster_array >= -1), "%s:%s range is [%f, %f]" % (raster_path, variable, np.min(raster_array), np.max(raster_array))
+        assert np.all(raster_array[np.logical_not(np.isnan(raster_array))] <= 1) and np.all(raster_array[np.logical_not(np.isnan(raster_array))] >= -1), "%s:%s range is [%f, %f]" % (raster_path, variable, np.min(raster_array), np.max(raster_array))
     elif 'harvestarea' in raster_path:
         assert np.all(raster_array >= 0), "%s:%s range is [%f, %f]" % (raster_path, variable, np.min(raster_array), np.max(raster_array))
         
@@ -58,6 +58,9 @@ def get_values(rr, cc):
     harvloss = knownharv * values[1] / values[0] if values[1] < 0 and values[0] > 0 else 0 # knownharv that's lost
     harvconf = abs(values[2]) * knownharv if values[1] < 0 else 0
 
+    if -harvloss > -negval:
+        negval = harvloss # It's all lost from the cultivated area
+    
     confval = 100 * abs(values[1]) * values[2] # weight confidence by area; undo / 100
     unharvbase = values[0] - knownharv if values[0] > knownharv else 0
 

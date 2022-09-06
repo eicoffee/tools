@@ -15,7 +15,7 @@ from conditions.gaez import ConditionGaez
 from conditions.elevation import ConditionElevation
 from conditions.latitude import ConditionLatitude
 
-variety = 'robusta' #'arabica'
+variety = 'arabica' #'robusta'
 
 climdir = "../extdata/rcp8.5-2050"
 gaezdir = "../extdata/gaez-a2-2050"

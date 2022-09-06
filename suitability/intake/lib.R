@@ -64,3 +64,31 @@ get.gaez.map <- function(variety) {
 
     rbind(t(as.matrix(cropped)), matrix(NA, 1, 720))
 }
+
+df.rollmean <- function(df, ignores, groups, kk) {
+    result <- data.frame()
+    for (group in unique(groups)) {
+        subdf <- subset(df, groups == group)
+        for (name in names(subdf)) {
+            if (name %in% ignores)
+                next
+            subdf[, name] <- c(rep(NA, kk-1), rollmean(subdf[, name], kk))
+        }
+        result <- rbind(result, subdf)
+    }
+
+    result
+}
+
+kernel.method <- function(map, arabica, robusta, limits) {
+    unweighted <- density(map, from=limits[1], to=limits[2], na.rm=T)
+
+    valid.arabica <- !is.na(map) & !is.na(arabica)
+    arabicaed <- density(map[valid.arabica], weights=arabica[valid.arabica] / sum(arabica[valid.arabica]), from=limits[1], to=limits[2])$y
+    valid.robusta <- !is.na(map) & !is.na(robusta)
+    robustaed <- density(map[valid.robusta], weights=robusta[valid.robusta] / sum(robusta[valid.robusta]), from=limits[1], to=limits[2])$y
+    center <- unweighted$x
+    unweighted <- unweighted$y
+
+    data.frame(center, unweighted, arabicaed, robustaed)
+}

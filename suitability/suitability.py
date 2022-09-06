@@ -5,11 +5,6 @@ import numpy as np
 from netCDF4 import Dataset
 from copula import SampledPDF, GaussianCopula
 
-# rootgrp = Dataset("../../database/harvestarea.nc4", "r")
-# harvlat = rootgrp.variables['lat'][:]
-# harvlon = rootgrp.variables['lon'][:]
-# harvest = rootgrp.variables['arabica'][:, :]
-
 class Suitability(object):
     def __init__(self, variety, conditions):
         self.variety = variety
@@ -68,6 +63,15 @@ class Suitability(object):
         weighted_prob = self.weighted_copula(*args, permult=100)
         return weighted_prob / unweighted_prob
 
+    def suitability_given_inquants(self, *args):
+        args = np.array(args)
+        unweighted_prob = self.unweighted_copula.integrate(args - .01, args + .01, permult=100)
+        if unweighted_prob == 0:
+            return 0
+
+        weighted_prob = self.weighted_copula.integrate(args - .01, args + .01, permult=100)
+        return weighted_prob / unweighted_prob        
+
     def make_netcdf4(self, filename, degpix=12):
         print filename
         latcount = 60 * degpix
@@ -104,7 +108,7 @@ if __name__ == '__main__':
 
     DO_ELEVATION_LIMITS = False
     DO_LATITUDE_EXOGENOUS = False
-    variety = 'robusta' #'arabica'
+    variety = 'arabica' #'robusta'
     
     from conditions.soil import ConditionSoil
     from conditions.bioclim import ConditionClimate

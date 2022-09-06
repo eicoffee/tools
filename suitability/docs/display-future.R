@@ -7,7 +7,7 @@ library(raster)
 source("intake/lib.R") # now up in coffee/tools
 
 do.rescale <- F
-fileprefix <- "robusta-future" #"arabica-future"
+fileprefix <- "arabica-future" #"robusta-future"
 
 database <- nc_open(paste0("suitability/outputs/", fileprefix, ".nc4"))
 map <- ncvar_get(database, "suitability")
@@ -36,8 +36,8 @@ mask[elev == 0] <- 3
 mask[is.na(elev)] <- 3
 
 none = map
-none[none != 0] <- NA
-none[none == 0] <- 1
+none[map != 0] <- NA
+none[map == 0] <- 1
 
 library(mapdata)
 
@@ -63,9 +63,9 @@ png(paste0("suitability/outputs/", fileprefix, ".png"), width=4320, height=720)
 ##map("worldHires", ylim=c(-30, 30), mar=rep(0,4))
 par(mar=rep(0, 4))
 plot(0, 0, ylim=c(-30, 30), xlim=c(-180, 180), xaxs = "i", yaxs = "i")
-image(longitude, latitude, map, col=brewer.pal(11,"RdYlGn"), add=T)
-image(longitude, latitude, confs, col=rgb(1, 1, 1, seq(1, 0, by=-.1)), add=T)
+image(longitude, latitude, map, col=brewer.pal(11,"PiYG"), add=T)
+image(longitude, latitude, confs, col=rgb(.95, .95, .95, seq(1, 0, by=-.1)), add=T)
 image(longitude, latitude, none, col="#FDFDFD", add=T)
-image(longitude, latitude, mask, col=c("#FF00FF", "#00FFFF", "#0000FF"), add=T) # "#FFFFFF80",
+image(longitude, latitude, mask, col=c("#A0A0A0", "#A0A0A0", "#0000FF"), add=T) # "#FFFFFF80",
 map("worldHires", ylim=c(-30, 30), xlim=c(-180, 180), col="#000000A0", add=T)
 dev.off()

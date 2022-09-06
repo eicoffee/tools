@@ -1,10 +1,12 @@
-setwd("~/projects/coffee/tools")
+setwd("~/research/coffee/tools")
 
 library(ncdf4)
 library(raster)
 library(ggplot2)
+library(zoo)
 source("suitability/intake/lib.R")
 
+pdf.method <- 'kernel' # bins
 do.displays <- F
 
 ## Get harvest area
@@ -15,12 +17,14 @@ robusta <- ncvar_get(database, "robusta")
 longitude <- ncvar_get(database, "lon")
 latitude <- ncvar_get(database, "lat")
 
-image(longitude, latitude, arabica)
+if (do.displays)
+    image(longitude, latitude, arabica)
 
 ## Get the elevation
 elev <- get.elev.map()
 
-image(longitude, latitude, elev)
+if (do.displays)
+    image(longitude, latitude, elev)
 
 ## Extract univariates
 
@@ -33,22 +37,30 @@ for (variety.name in c('arabica', 'robusta')) {
     else
         variety <- robusta
 
-    uppers <- c(seq(-10, 2500, by=10), Inf)
-    center <- uppers - 5
+    if (pdf.method == 'bins') {
+        uppers <- c(seq(-10, 2500, by=10), Inf)
+        center <- uppers - 5
 
-    unweighted <- c()
-    weighted <- c()
+        unweighted <- c()
+        weighted <- c()
 
-    for (upper in uppers) {
-        unweighted <- c(unweighted, sum(elev < upper, na.rm=T))
-        weighted <- c(weighted, sum(variety[elev < upper], na.rm=T))
+        for (upper in uppers) {
+            unweighted <- c(unweighted, sum(elev < upper, na.rm=T))
+            weighted <- c(weighted, sum(variety[elev < upper], na.rm=T))
+        }
+
+        unweighted.fractions <- unweighted / unweighted[length(unweighted)]
+        weighted.fractions <- weighted / weighted[length(weighted)]
+
+        unweighted <- diff(c(0, unweighted.fractions))
+        weighted <- diff(c(0, weighted.fractions))
+    } else {
+        unweighted <- density(elev, bw=100, from=-10, to=2500, na.rm=T)
+        valid <- !is.na(elev) & !is.na(variety)
+        weighted <- density(elev[valid], bw=100, weights=variety[valid] / sum(variety[valid]), from=-10, to=2500)$y
+        center <- unweighted$x
+        unweighted <- unweighted$y
     }
-
-    unweighted.fractions <- unweighted / unweighted[length(unweighted)]
-    weighted.fractions <- weighted / weighted[length(weighted)]
-
-    unweighted <- diff(c(0, unweighted.fractions))
-    weighted <- diff(c(0, weighted.fractions))
 
     data <- rbind(data, data.frame(variety=variety.name, center, unweighted, weighted))
 }
@@ -56,7 +68,7 @@ for (variety.name in c('arabica', 'robusta')) {
 write.csv(data, file="data/elevdist.csv", row.names=F)
 
 if (do.displays) {
-    ggplot(data[data$center < Inf,], aes(x=center, y=weighted)) +
+    ggplot(subset(df.rollmean(data[data$center < Inf,], "variety", data$variety[data$center < Inf], 2), !is.na(variety)), aes(x=center, y=weighted)) +
         facet_grid(variety ~ ., scale="free_y") +
             geom_ribbon(aes(ymin=0, ymax=unweighted), fill="#80FF80", alpha=.5, colour="#70C070") + geom_line() +
     scale_colour_discrete(name="Elevation Distribution:",
@@ -64,6 +76,7 @@ if (do.displays) {
         theme(legend.position="top", axis.ticks = element_blank(), axis.text.y = element_blank()) +
             xlab("Elevation") + ylab("") + ggtitle("Distribution of cultivation by elevation") +
                 scale_x_continuous(expand=c(0, 0)) + scale_y_continuous(expand=c(0, 0))
+    ggsave("suitability/intake/figures/elevation.pdf", width=6.5, height=5)
 }
 
 ## Calculate correlations with all soils

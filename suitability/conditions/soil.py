@@ -3,6 +3,8 @@ import numpy as np
 from netCDF4 import Dataset
 from condition import *
 
+pdf_method = 'kernel'
+
 class ConditionSoil(Condition):
     def __init__(self):
         # Order used in R and distribution list
@@ -43,20 +45,23 @@ class ConditionSoil(Condition):
             unweighteds[name].append(soildist.iloc[ii].unweighted)
 
         span_around_first3 = lambda x: (x - 2, x + 2)
-        def span_around_second3(x):
-            if x == 0:
-                scaled = 0
-            else:
-                scaled = 10 * np.log(x * np.exp(10) / 100)
-            if scaled < 2:
-                lower = 0
-                upper = 100 * np.exp((scaled + 2) / 10.0) / np.exp(10)
-            else:
-                lower = 100 * np.exp((scaled - 2) / 10.0) / np.exp(10)
-                upper = 100 * np.exp((scaled + 2) / 10.0) / np.exp(10)
+        if pdf_method == 'bins':
+            def span_around_second3(x):
+                if x == 0:
+                    scaled = 0
+                else:
+                    scaled = 10 * np.log(x * np.exp(10) / 100)
+                if scaled < 2:
+                    lower = 0
+                    upper = 100 * np.exp((scaled + 2) / 10.0) / np.exp(10)
+                else:
+                    lower = 100 * np.exp((scaled - 2) / 10.0) / np.exp(10)
+                    upper = 100 * np.exp((scaled + 2) / 10.0) / np.exp(10)
 
-            return (lower, upper)
-
+                return (lower, upper)
+        else:
+            span_around_second3 = lambda x: (np.exp(np.log(x) - .1), np.exp(np.log(x) + .1))
+            
         span_arounds = ([span_around_first3] * 3 + [span_around_second3] * 3) * 2
 
         weighted_dists = []
@@ -88,13 +93,17 @@ class ConditionSoil(Condition):
         if component in ['sand', 'silt', 'clay']:
             rows = self.soildist[self.soildist.soiltype == topbot & self.soildist.component == component & self.soildist.center >= value - 2 & self.soildist.center <= value + 2]
         else:
-            scaled = 10 * np.log(y * np.exp(10) / 100)
-            if scaled < 2:
-                lower = 0
-                upper = 100 * np.exp((scaled + 2) / 10) / np.exp(10)
+            if pdf_method == 'bins':
+                scaled = 10 * np.log(y * np.exp(10) / 100)
+                if scaled < 2:
+                    lower = 0
+                    upper = 100 * np.exp((scaled + 2) / 10) / np.exp(10)
+                else:
+                    lower = 100 * np.exp((scaled - 2) / 10) / np.exp(10)
+                    upper = 100 * np.exp((scaled + 2) / 10) / np.exp(10)
             else:
-                lower = 100 * np.exp((scaled - 2) / 10) / np.exp(10)
-                upper = 100 * np.exp((scaled + 2) / 10) / np.exp(10)
+                lower = np.exp(np.log(value) - .1)
+                upper = np.exp(np.log(value) + .1)
 
             rows = self.soildist[self.soildist.soiltype == topbot & self.soildist.component == component & self.soildist.center >= lower & self.soildist.center <= upper]
 

@@ -8,8 +8,10 @@ from scipy.special import ndtri
 from scipy.linalg import get_blas_funcs
 
 class SampledPDF(StepFunction):
-    """Like ECDF, but supports inverse and provides intervals around a point."""
-    def __init__(self, centers, densities, span_around):
+    """Like ECDF, but supports inverse and provides intervals around a point.
+    span_around is f(x, span) -> span tuple
+    """
+    def __init__(self, centers, densities, span_around=None):
         self.centers = np.array(centers)
         self.pp = np.cumsum(np.array(densities))
         if self.pp[-1] != 1:
@@ -61,6 +63,8 @@ class GaussianCopula(object):
         u1s = []
         for ii in range(len(xxs)):
             u01 = self.dists[ii].cdf_around(xxs[ii])
+            if u01[0] == u01[1]:
+                print "Zero Mass: Distribution %d at %s" % (ii, xxs[ii])
             u0s.append(u01[0])
             u1s.append(u01[1])
 

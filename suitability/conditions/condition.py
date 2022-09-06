@@ -34,3 +34,15 @@ class Condition(object):
 
     def independent_factor_at(self, variety, latitude, longitude, **kw):
         return 1
+
+    def get_corrs_with(self, other):
+        get_corr = self.get_corr_function()
+
+        corrs = np.zeros(len(self.order))
+        for ii in range(len(self.order)):
+            if other == self.order[ii]:
+                corrs[ii] = 1.
+            else:
+                corrs[ii] = get_corr(self.order[ii], other)
+
+        return corrs

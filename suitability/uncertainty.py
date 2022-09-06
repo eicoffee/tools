@@ -6,7 +6,7 @@ import product
 
 climdir = "../extdata/rcp8.5-2050"
 gaezdir = "../extdata/gaez-a2-2050"
-variety = "robusta" #"arabica"
+variety = "arabica" #"robusta"
 outdir = "outputs"
 
 grid_urban = product.get_table_grid("../data/urban.csv")
@@ -34,7 +34,6 @@ for dirname in os.listdir(climdir):
         latitude, longitude, array = product.get_bayes_array(os.path.join(outdir, variety + "-" + dirname + '-' + gaezkey + '.nc4'))
 
         suitability = product.all_products(latitude, longitude, array, grid_urban + grid_protected, transfunc)
-        suitability[np.isnan(suitability)] = 1
 
         bayes_arrays[dirname + '-' + gaezkey] = suitability
 

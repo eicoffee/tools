@@ -1,3 +1,5 @@
+-1. docs/display-database.R
+
 Upon adding a new data source:
  - Add a function to intake/lib.R to load it at the correct resolution (4320 x 720)
  - Create a script like the ones in intake/ to calculate the PDF and correlations (and run it
@@ -5,6 +7,8 @@ Upon adding a new data source:
  - Create a class like the ones in conditions
  - Add it to suitability and to future
 
+0. Run modelfigure (once for each variety)
+0. Run modelcountires.py
 1. Run suitability (once for each variety)
 2. Run compare.R to get loess relationships (twice, swapping arabica with robusta after the specified line)
 3. Run product
@@ -14,7 +18,23 @@ Upon adding a new data source:
 5. Run uncertainty (once for each variety)
 8. Run docs/display-future.R (once for each variety)
 6. Run bycountry (once for each variety)
-9. Run docs/tables.R (once for each variety, keeping globaldata
-between runs)
+9. Run docs/tables.R
 10. Run variance.py (once for each variety)
 11. Run docs/variance.R (once for each variety)
+12. Run docs/movement.R
+13. Run docs/modelfigure.R (once for each variety)
+
+python ~/projects/research-common/tropict/splice_grid.py robusta-future.png robusta-futureb.png
+python ~/projects/research-common/tropict/splice_grid.py robusta-future-conf.png robusta-future-confb.png
+python ~/projects/research-common/tropict/splice_grid.py robusta-future-suit.png robusta-future-suitb.png
+python ~/projects/research-common/tropict/splice_grid.py arabica-future-suit.png arabica-future-suitb.png
+python ~/projects/research-common/tropict/splice_grid.py arabica-future-conf.png arabica-future-confb.png
+python ~/projects/research-common/tropict/splice_grid.py arabica-future.png arabica-futureb.png
+python ~/projects/research-common/tropict/splice_grid.py arabica-difference.png arabica-differenceb.png
+python ~/projects/research-common/tropict/splice_grid.py robusta-difference.png robusta-differenceb.png
+python ~/projects/research-common/tropict/splice_grid.py robusta-product.png robusta-productb.png
+python ~/projects/research-common/tropict/splice_grid.py arabica-product.png arabica-productb.png
+python ~/projects/research-common/tropict/splice_grid.py arabica.png arabicab.png
+python ~/projects/research-common/tropict/splice_grid.py robusta.png robustab.png
+python ~/projects/research-common/tropict/splice_grid.py robusta-movement.png robusta-movementb.png
+python ~/projects/research-common/tropict/splice_grid.py arabica-movement.png arabica-movementb.png
