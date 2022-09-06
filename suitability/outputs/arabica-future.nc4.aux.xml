@@ -1,0 +1,26 @@
+<PAMDataset>
+  <Subdataset name="suitability">
+    <PAMDataset>
+      <PAMRasterBand band="1">
+        <Metadata>
+          <MDI key="STATISTICS_MAXIMUM">0.0058037843555212</MDI>
+          <MDI key="STATISTICS_MEAN">5.8488026551361e-05</MDI>
+          <MDI key="STATISTICS_MINIMUM">-0.0060628554783762</MDI>
+          <MDI key="STATISTICS_STDDEV">0.00078184020503966</MDI>
+        </Metadata>
+      </PAMRasterBand>
+    </PAMDataset>
+  </Subdataset>
+  <Subdataset name="confidence">
+    <PAMDataset>
+      <PAMRasterBand band="1">
+        <Metadata>
+          <MDI key="STATISTICS_MAXIMUM">1</MDI>
+          <MDI key="STATISTICS_MEAN">0.94835920623221</MDI>
+          <MDI key="STATISTICS_MINIMUM">0</MDI>
+          <MDI key="STATISTICS_STDDEV">0.16735867294232</MDI>
+        </Metadata>
+      </PAMRasterBand>
+    </PAMDataset>
+  </Subdataset>
+</PAMDataset>
